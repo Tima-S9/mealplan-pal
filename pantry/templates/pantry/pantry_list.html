@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>My Pantry</h2>
+  <a href="{% url 'pantry_add' %}" class="btn btn-success">Add Item</a>
+  <ul>
+    {% for item in items %}
+      <li>
+        {{ item.ingredient.name }} ({{ item.amount }} {{ item.ingredient.unit }})
+        <a href="{% url 'pantry_edit' item.pk %}">Edit</a>
+        <a href="{% url 'pantry_delete' item.pk %}">Delete</a>
+      </li>
+    {% empty %}
+      <li>No pantry items found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

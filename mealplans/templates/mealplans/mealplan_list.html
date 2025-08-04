@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>My Meal Plans</h2>
+  <a href="{% url 'mealplan_create' %}" class="btn btn-success">New Meal Plan</a>
+  <ul>
+    {% for plan in plans %}
+      <li>
+        Week starting: {{ plan.week_start_date }}
+        <a href="{% url 'mealplan_edit' plan.pk %}">Edit</a>
+        <a href="{% url 'mealplan_delete' plan.pk %}">Delete</a>
+      </li>
+    {% empty %}
+      <li>No meal plans found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

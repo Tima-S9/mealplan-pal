@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>{{ recipe.title }}</h2>
+  <p><strong>Description:</strong> {{ recipe.description }}</p>
+  {% if recipe.image %}
+    <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" style="max-width:300px;">
+  {% endif %}
+  <p><strong>Ingredients:</strong></p>
+  <ul>
+    {% for ingredient in recipe.ingredients.all %}
+      <li>{{ ingredient.name }} ({{ ingredient.unit }})</li>
+    {% endfor %}
+  </ul>
+  <p><strong>Owner:</strong> {{ recipe.owner.username }}</p>
+  <p><strong>Public:</strong> {{ recipe.is_public|yesno:"Yes,No" }}</p>
+  <a href="{% url 'recipe_update' recipe.pk %}" class="btn btn-primary">Edit</a>
+  <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-danger">Delete</a>
+  <a href="{% url 'recipe_list' %}">Back to Recipes</a>
+{% endblock %}

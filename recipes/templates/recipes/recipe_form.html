@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>{% if recipe %}Edit{% else %}Create{% endif %} Recipe</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">{% if recipe %}Update{% else %}Create{% endif %}</button>
+  </form>
+{% endblock %}

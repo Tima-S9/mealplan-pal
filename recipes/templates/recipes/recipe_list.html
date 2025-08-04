@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>My Recipes</h2>
+  <a href="{% url 'recipe_create' %}" class="btn btn-success">New Recipe</a>
+  <ul>
+    {% for recipe in recipes %}
+      <li>
+        <a href="{% url 'recipe_detail' recipe.pk %}">{{ recipe.title }}</a>
+        {% if recipe.owner == user %}
+          <a href="{% url 'recipe_update' recipe.pk %}">Edit</a>
+          <a href="{% url 'recipe_delete' recipe.pk %}">Delete</a>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li>No recipes found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
