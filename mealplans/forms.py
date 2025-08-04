@@ -3,6 +3,13 @@ from .models import MealPlan, MealPlanItem, ShoppingItem
 
 
 class MealPlanForm(forms.ModelForm):
+    week_start_date = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+            'class': 'form-control',
+            'placeholder': 'YYYY-MM-DD',
+        })
+    )
     class Meta:
         model = MealPlan
         fields = ['week_start_date']

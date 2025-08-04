@@ -1,5 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow">
+          <div class="card-body text-center">
+            <h2 class="mb-4">Delete Recipe</h2>
+            <p>Are you sure you want to delete <strong>{{ recipe.title }}</strong>?</p>
+            <form method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+              <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% extends "base.html" %}
+{% block content %}
   <h2>Delete Recipe</h2>
   <p>Are you sure you want to delete the recipe "{{ recipe.title }}"?</p>
   <form method="post">

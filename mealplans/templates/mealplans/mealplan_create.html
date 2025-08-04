@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-4">Create Weekly Meal Plan</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="row g-4 mb-4">
+      {% for day in week_days %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 shadow-lg border-0">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title fw-bold mb-2">{{ day }}</h5>
+              <select class="form-select mb-3" name="recipe_{{ day }}">
+                <option value="">-- Select Recipe --</option>
+                {% for recipe in recipes %}
+                  <option value="{{ recipe.pk }}">{{ recipe.title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg">Generate Shopping List</button>
+  </form>
+
+  {% if shopping_ingredients %}
+  <div class="mt-5">
+    <h3 class="mb-3">Shopping List</h3>
+    <ul class="list-group">
+      {% for ingredient in shopping_ingredients %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ ingredient.name }}</span>
+          <span class="badge bg-secondary">{{ ingredient.total_amount }} {{ ingredient.unit }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

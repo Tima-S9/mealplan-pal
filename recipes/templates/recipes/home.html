@@ -5,7 +5,8 @@
       <div class="col text-center">
         <h1 class="display-4">Welcome to Pantry Pal!</h1>
         <p class="lead">Plan your meals, manage your pantry, and generate shopping lists with ease.</p>
-        <a href="{% url 'recipe_create' %}" class="btn btn-success btn-lg">Create a Recipe</a>
+        <a href="{% url 'recipe_list' %}" class="btn btn-info btn-lg me-2">View Recipes</a>
+        <a href="{% url 'recipe_create' %}" class="btn btn-success btn-lg me-2">Create a Recipe</a>
         <a href="{% url 'mealplan_create' %}" class="btn btn-primary btn-lg">Plan Your Meals</a>
       </div>
     </div>

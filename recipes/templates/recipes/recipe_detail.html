@@ -1,36 +1,71 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card shadow">
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-lg border-0">
+        <div class="row g-0">
           {% if recipe.image %}
-            <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
+          <div class="col-md-5">
+            <img src="{{ recipe.image.url }}" class="img-fluid rounded-start h-100 object-fit-cover" alt="{{ recipe.title }}">
+          </div>
           {% endif %}
-          <div class="card-body">
-            <h2 class="card-title">{{ recipe.title }}</h2>
-            <p class="card-text">{{ recipe.description }}</p>
-            <h5>Ingredients</h5>
-            <ul class="list-unstyled mb-3">
-              {% for ingredient in recipe.ingredients.all %}
-                <li>{{ ingredient.name }} ({{ ingredient.unit }})</li>
-              {% endfor %}
-            </ul>
-            {% if recipe.calories %}
-              <p><strong>Calories:</strong> {{ recipe.calories }}</p>
-            {% endif %}
-            <p><strong>Owner:</strong> {{ recipe.owner.username }}</p>
-            <span class="badge {% if recipe.is_public %}bg-success{% else %}bg-secondary{% endif %}">
-              {% if recipe.is_public %}Public{% else %}Private{% endif %}
-            </span>
-            <div class="mt-4 d-flex gap-2">
-              <a href="{% url 'recipe_update' recipe.pk %}" class="btn btn-warning">Edit</a>
-              <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-danger">Delete</a>
-              <a href="{% url 'recipe_list' %}" class="btn btn-outline-secondary">Back to Recipes</a>
+          <div class="col-md-7">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="card-title mb-0">{{ recipe.title }}</h2>
+                <span class="badge {% if recipe.is_public %}bg-success{% else %}bg-secondary{% endif %}">
+                  {% if recipe.is_public %}Public{% else %}Private{% endif %}
+                </span>
+              </div>
+              <p class="card-text text-secondary">{{ recipe.description }}</p>
+              <div class="mb-3">
+                <h5 class="mb-2">Ingredients</h5>
+                <ul class="list-group mb-3">
+                  {% for ingredient in recipe.ingredients.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <span class="fw-semibold">{{ ingredient.name }}</span>
+                      <span class="badge bg-light text-dark border">{{ ingredient.unit }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="row mb-3">
+                {% if recipe.calories %}
+                  <div class="col-auto">
+                    <span class="badge bg-warning text-dark">Calories: {{ recipe.calories }}</span>
+                  </div>
+                {% endif %}
+                {% if recipe.protein %}
+                  <div class="col-auto">
+                    <span class="badge bg-info">Protein: {{ recipe.protein }} g</span>
+                  </div>
+                {% endif %}
+                {% if recipe.fat %}
+                  <div class="col-auto">
+                    <span class="badge bg-danger">Fat: {{ recipe.fat }} g</span>
+                  </div>
+                {% endif %}
+                {% if recipe.carbs %}
+                  <div class="col-auto">
+                    <span class="badge bg-primary">Carbs: {{ recipe.carbs }} g</span>
+                  </div>
+                {% endif %}
+              </div>
+              <p class="mb-2"><strong>Owner:</strong> {{ recipe.owner.username }}</p>
+              <div class="mt-4 d-flex gap-2">
+                <a href="{% url 'recipe_update' recipe.pk %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-danger">Delete</a>
+                <a href="{% url 'recipe_list' %}" class="btn btn-outline-secondary">Back to Recipes</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+<style>
+  .object-fit-cover { object-fit: cover; }
+</style>
 {% endblock %}

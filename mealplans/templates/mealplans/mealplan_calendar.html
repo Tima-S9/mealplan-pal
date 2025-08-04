@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Meal Plan Calendar | MealPlan Pal{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">Weekly Meal Plan</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th>Day</th>
+          <th>Breakfast</th>
+          <th>Lunch</th>
+          <th>Dinner</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for day in week_days %}
+        <tr>
+          <td><strong>{{ day }}</strong></td>
+          <td>
+            {% for item in mealplan_items.breakfast|get_day:day %}
+              <div>{{ item.recipe.title }}</div>
+            {% empty %}
+              <span class="text-muted">No meal</span>
+            {% endfor %}
+          </td>
+          <td>
+            {% for item in mealplan_items.lunch|get_day:day %}
+              <div>{{ item.recipe.title }}</div>
+            {% empty %}
+              <span class="text-muted">No meal</span>
+            {% endfor %}
+          </td>
+          <td>
+            {% for item in mealplan_items.dinner|get_day:day %}
+              <div>{{ item.recipe.title }}</div>
+            {% empty %}
+              <span class="text-muted">No meal</span>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

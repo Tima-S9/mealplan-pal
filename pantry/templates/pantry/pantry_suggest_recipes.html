@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-4">Recipe Suggestions Based on Your Pantry</h2>
+  <h4 class="mb-3">Recipes you can make now:</h4>
+  <div class="row g-4 mb-4">
+    {% for recipe in recipes_only_pantry %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 shadow-lg border-0">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title fw-bold mb-2">{{ recipe.title }}</h5>
+            <p class="card-text">{{ recipe.description|truncatewords:20 }}</p>
+            <ul class="list-unstyled mb-2">
+              {% for ingredient in recipe.ingredients.all %}
+                <li><span class="badge bg-light text-dark border">{{ ingredient.name }} ({{ ingredient.unit }})</span></li>
+              {% endfor %}
+            </ul>
+            <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-primary mt-auto">View Recipe</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12"><div class="alert alert-info">No recipes can be made with only your pantry ingredients.</div></div>
+    {% endfor %}
+  </div>
+
+  <h4 class="mb-3">Recipes missing some ingredients:</h4>
+  <div class="row g-4 mb-4">
+    {% for item in recipes_with_missing %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 shadow-lg border-0">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title fw-bold mb-2">{{ item.recipe.title }}</h5>
+            <p class="card-text">{{ item.recipe.description|truncatewords:20 }}</p>
+            <ul class="list-unstyled mb-2">
+              {% for ingredient in item.recipe.ingredients.all %}
+                <li>
+                  <span class="badge {% if ingredient in item.missing_ingredients %}bg-danger{% else %}bg-light text-dark border{% endif %}">
+                    {{ ingredient.name }} ({{ ingredient.unit }})
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+            <div class="mb-2">
+              <strong>Missing ingredients:</strong>
+              {% for ingredient in item.missing_ingredients %}
+                <span class="badge bg-danger">{{ ingredient.name }}</span>
+              {% endfor %}
+            </div>
+            <a href="{% url 'recipe_detail' item.recipe.pk %}" class="btn btn-outline-primary mt-auto">View Recipe</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12"><div class="alert alert-success">All recipes can be made with your pantry ingredients!</div></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
