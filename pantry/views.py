@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from .models import PantryItem
 from .forms import PantryItemForm
 
+
 # Create your views here.
 def index(request):
     return HttpResponse("Welcome to the Pantry!") 
@@ -13,6 +14,7 @@ def index(request):
 def pantry_list(request):
     items = PantryItem.objects.filter(user=request.user)
     return render(request, 'pantry/pantry_list.html', {'items': items})
+
 
 @login_required
 def pantry_add(request):
@@ -27,6 +29,7 @@ def pantry_add(request):
         form = PantryItemForm()
     return render(request, 'pantry/pantry_form.html', {'form': form})
 
+
 @login_required
 def pantry_edit(request, pk):
     item = get_object_or_404(PantryItem, pk=pk, user=request.user)
@@ -38,6 +41,7 @@ def pantry_edit(request, pk):
     else:
         form = PantryItemForm(instance=item)
     return render(request, 'pantry/pantry_form.html', {'form': form, 'item': item})
+
 
 @login_required
 def pantry_delete(request, pk):

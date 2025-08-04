@@ -4,14 +4,17 @@ from django.http import HttpResponse
 from .models import MealPlan, MealPlanItem, ShoppingItem
 from .forms import MealPlanForm, MealPlanItemForm, ShoppingItemForm
 
+
 # Create your views here.
 def index(request):
     return HttpResponse("Mealplans Home Page!")
+
 
 @login_required
 def mealplan_list(request):
     plans = MealPlan.objects.filter(owner=request.user)
     return render(request, 'mealplans/mealplan_list.html', {'plans': plans})
+
 
 @login_required
 def mealplan_create(request):
@@ -26,6 +29,7 @@ def mealplan_create(request):
         form = MealPlanForm()
     return render(request, 'mealplans/mealplan_form.html', {'form': form})
 
+
 @login_required
 def mealplan_edit(request, pk):
     plan = get_object_or_404(MealPlan, pk=pk, owner=request.user)
@@ -37,6 +41,7 @@ def mealplan_edit(request, pk):
     else:
         form = MealPlanForm(instance=plan)
     return render(request, 'mealplans/mealplan_form.html', {'form': form, 'plan': plan})
+
 
 @login_required
 def mealplan_delete(request, pk):

@@ -4,8 +4,21 @@ from django.views.generic import TemplateView
 from .models import Recipe
 from .forms import RecipeForm
 
+
+
 class HomeView(TemplateView):
     template_name = "recipes/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipes'] = Recipe.objects.all()[:3]  # Show 3 recipes
+        return context
+
+
+def recipe_list(request):
+    recipes = Recipe.objects.all()
+    return render(request, 'recipes/recipe_list.html', {'recipes': recipes})
+
 
 @login_required
 def recipe_create(request):
@@ -20,6 +33,7 @@ def recipe_create(request):
     else:
         form = RecipeForm()
     return render(request, 'recipes/recipe_form.html', {'form': form})
+
 
 @login_required
 def recipe_update(request, pk):

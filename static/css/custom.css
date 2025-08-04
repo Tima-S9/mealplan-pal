@@ -1,0 +1,43 @@
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  background-color: #f8f9fa;
+}
+
+.navbar {
+  background-color: #2a4d69 !important;
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.card {
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(42,77,105,0.08);
+}
+
+.btn-primary, .bg-primary {
+  background-color: #2a4d69 !important;
+  border-color: #2a4d69 !important;
+}
+
+.btn-success {
+  background-color: #4b86b4 !important;
+  border-color: #4b86b4 !important;
+}
+
+.btn-warning {
+  background-color: #f9d342 !important;
+  border-color: #f9d342 !important;
+  color: #2a4d69 !important;
+}
+
+.btn-danger {
+  background-color: #e94f37 !important;
+  border-color: #e94f37 !important;
+}
+
+.footer {
+  font-size: 0.95rem;
+}

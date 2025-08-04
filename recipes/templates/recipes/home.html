@@ -1,10 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Welcome to Pantry Pal!</h1>
-  <p>Plan your meals, manage your pantry, and generate shopping lists with ease.</p>
-  <ul>
-    <li><a href="{% url 'recipe_list' %}">My Recipes</a></li>
-    <li><a href="{% url 'pantry_list' %}">My Pantry</a></li>
-    <li><a href="{% url 'mealplan_list' %}">My Meal Plans</a></li>
-  </ul>
+  <div class="container py-5">
+    <div class="row mb-4">
+      <div class="col text-center">
+        <h1 class="display-4">Welcome to Pantry Pal!</h1>
+        <p class="lead">Plan your meals, manage your pantry, and generate shopping lists with ease.</p>
+        <a href="{% url 'recipe_create' %}" class="btn btn-success btn-lg">Create a Recipe</a>
+        <a href="{% url 'mealplan_create' %}" class="btn btn-primary btn-lg">Plan Your Meals</a>
+      </div>
+    </div>
+    <h2 class="mb-4">Featured Recipes</h2>
+    <div class="row">
+      {% for recipe in recipes %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow">
+            {% if recipe.image %}
+              <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ recipe.title }}</h5>
+              <p class="card-text">{{ recipe.description|truncatewords:20 }}</p>
+              <ul class="list-unstyled">
+                {% for ingredient in recipe.ingredients.all %}
+                  <li>{{ ingredient.name }} ({{ ingredient.unit }})</li>
+                {% endfor %}
+              </ul>
+              {% if recipe.calories %}
+                <p><strong>Calories:</strong> {{ recipe.calories }}</p>
+              {% endif %}
+              <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-outline-primary">View Recipe</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No recipes found.</p>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}

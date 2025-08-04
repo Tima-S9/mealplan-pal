@@ -1,18 +1,41 @@
 {% extends "base.html" %}
 {% block content %}
-  <h2>My Recipes</h2>
-  <a href="{% url 'recipe_create' %}" class="btn btn-success">New Recipe</a>
-  <ul>
-    {% for recipe in recipes %}
-      <li>
-        <a href="{% url 'recipe_detail' recipe.pk %}">{{ recipe.title }}</a>
-        {% if recipe.owner == user %}
-          <a href="{% url 'recipe_update' recipe.pk %}">Edit</a>
-          <a href="{% url 'recipe_delete' recipe.pk %}">Delete</a>
-        {% endif %}
-      </li>
-    {% empty %}
-      <li>No recipes found.</li>
-    {% endfor %}
-  </ul>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>My Recipes</h2>
+      <a href="{% url 'recipe_create' %}" class="btn btn-success">New Recipe</a>
+    </div>
+    <div class="row">
+      {% for recipe in recipes %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow">
+            {% if recipe.image %}
+              <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ recipe.title }}</h5>
+              <p class="card-text">{{ recipe.description|truncatewords:20 }}</p>
+              <ul class="list-unstyled">
+                {% for ingredient in recipe.ingredients.all %}
+                  <li>{{ ingredient.name }} ({{ ingredient.unit }})</li>
+                {% endfor %}
+              </ul>
+              {% if recipe.calories %}
+                <p><strong>Calories:</strong> {{ recipe.calories }}</p>
+              {% endif %}
+              <div class="d-flex justify-content-between">
+                <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-outline-primary">View</a>
+                {% if recipe.owner == user %}
+                  <a href="{% url 'recipe_update' recipe.pk %}" class="btn btn-outline-warning">Edit</a>
+                  <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-outline-danger">Delete</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No recipes found.</p>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}
