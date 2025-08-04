@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Welcome to Pantry Pal!</h1>
+  <p>Plan your meals, manage your pantry, and generate shopping lists with ease.</p>
+  <ul>
+    <li><a href="{% url 'recipe_list' %}">My Recipes</a></li>
+    <li><a href="{% url 'pantry_list' %}">My Pantry</a></li>
+    <li><a href="{% url 'mealplan_list' %}">My Meal Plans</a></li>
+  </ul>
+{% endblock %}

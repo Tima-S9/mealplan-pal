@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.views.generic import TemplateView
 from .models import Recipe
 from .forms import RecipeForm
 
-# Create your views here.
-def index(request):
-    return HttpResponse("Recipes Home Page!")
+class HomeView(TemplateView):
+    template_name = "recipes/home.html"
 
 @login_required
 def recipe_create(request):
