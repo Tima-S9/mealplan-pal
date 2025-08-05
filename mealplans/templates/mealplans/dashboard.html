@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold mb-4">Mealplans Dashboard</h2>
+  <div class="row mb-4">
+    <div class="col-md-6 col-lg-4 mb-3">
+      <a href="{% url 'mealplan_list' %}" class="btn btn-info btn-lg w-100"><i class="bi bi-calendar-week"></i> My Meal Plans</a>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-3">
+      <a href="{% url 'mealplan_create' %}" class="btn btn-success btn-lg w-100"><i class="bi bi-plus-circle"></i> Create Meal Plan</a>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-3">
+      <a href="{% url 'shopping_list' %}" class="btn btn-secondary btn-lg w-100"><i class="bi bi-cart"></i> Shopping List</a>
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+{% endblock %}

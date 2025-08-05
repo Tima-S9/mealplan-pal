@@ -3,6 +3,26 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .models import PantryItem
 from recipes.models import Recipe, Ingredient, RecipeIngredient
+from .forms import PantryItemForm
+
+# Add missing ingredients to shopping list from pantry suggestions
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def add_missing_to_shopping_list(request):
+    if request.method == 'POST':
+        missing_ids = request.POST.get('missing_ingredients', '').split(',')
+        for ingredient_id in missing_ids:
+            if ingredient_id:
+                ingredient = Ingredient.objects.get(pk=ingredient_id)
+                ShoppingItem.objects.create(user=request.user, ingredient=ingredient)
+        return redirect('shopping_list')
+
+
+def pantry_dashboard(request):
+    return render(request, 'pantry/dashboard.html')
+
 
 @login_required
 def pantry_suggest_recipes(request):
@@ -24,16 +44,18 @@ def pantry_suggest_recipes(request):
             recipes_only_pantry.append(recipe)
         else:
             missing_ingredients = Ingredient.objects.filter(pk__in=missing)
+            missing_ids = list(missing)
             recipes_with_missing.append({
                 'recipe': recipe,
                 'missing_ingredients': missing_ingredients,
+                'missing_ingredient_ids': missing_ids,
             })
 
     return render(request, 'pantry/pantry_suggest_recipes.html', {
         'recipes_only_pantry': recipes_only_pantry,
         'recipes_with_missing': recipes_with_missing,
     })
-from .forms import PantryItemForm
+
 
 
 # Create your views here.

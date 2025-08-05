@@ -1,3 +1,19 @@
+from recipes.models import Ingredient
+
+# Create shopping list from mealplan selected recipes
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def create_shopping_list_from_mealplan(request):
+    if request.method == 'POST':
+        missing_ids = request.POST.get('missing_ingredients', '').split(',')
+        for ingredient_id in missing_ids:
+            if ingredient_id:
+                ingredient = Ingredient.objects.get(pk=ingredient_id)
+                ShoppingItem.objects.create(user=request.user, ingredient=ingredient)
+        return redirect('shopping_list')
+# Dashboard view for Mealplans
+def mealplans_dashboard(request):
+    return render(request, 'mealplans/dashboard.html')
 # Shopping List View
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, redirect, get_object_or_404
@@ -24,6 +40,7 @@ def mealplan_create(request):
     week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     recipes = Recipe.objects.filter(owner=request.user)
     shopping_ingredients = None
+    missing_ingredient_ids = []
 
     if request.method == 'POST':
         selected_recipe_pks = []
@@ -35,6 +52,7 @@ def mealplan_create(request):
 
         # Aggregate ingredients and amounts
         ingredient_totals = {}
+        all_ingredient_pks = set()
         for recipe in selected_recipes:
             for ri in RecipeIngredient.objects.filter(recipe=recipe):
                 key = (ri.ingredient.pk, ri.ingredient.name, ri.ingredient.unit)
@@ -42,23 +60,26 @@ def mealplan_create(request):
                     ingredient_totals[key] = ri.amount
                 else:
                     ingredient_totals[key] += ri.amount
+                all_ingredient_pks.add(ri.ingredient.pk)
         shopping_ingredients = [
             {'name': name, 'unit': unit, 'total_amount': round(amount, 2)}
             for (_, name, unit), amount in ingredient_totals.items()
         ]
-
-        # Optionally, save MealPlan and MealPlanItems here
-        # ...
-
+        # Get user's pantry ingredient PKs
+        pantry_items = PantryItem.objects.filter(user=request.user)
+        pantry_ingredient_pks = set(item.ingredient.pk for item in pantry_items)
+        missing_ingredient_ids = list(all_ingredient_pks - pantry_ingredient_pks)
         return render(request, 'mealplans/mealplan_create.html', {
             'week_days': week_days,
             'recipes': recipes,
             'shopping_ingredients': shopping_ingredients,
+            'missing_ingredient_ids': missing_ingredient_ids,
         })
 
     return render(request, 'mealplans/mealplan_create.html', {
         'week_days': week_days,
         'recipes': recipes,
+        'missing_ingredient_ids': [],
     })
 
 

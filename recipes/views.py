@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+import requests
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from .models import Recipe
@@ -7,6 +8,10 @@ from .forms import RecipeForm
 
 class HomeView(TemplateView):
     template_name = "recipes/home.html"
+
+
+def recipes_dashboard(request):
+    return render(request, 'recipes/dashboard.html')
 
 
 def get_context_data(self, **kwargs):
