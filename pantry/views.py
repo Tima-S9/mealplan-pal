@@ -6,7 +6,7 @@ from .forms import PantryItemForm
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from mealplans.models import MealPlan, MealPlanItem 
+from mealplans.models import MealPlan, MealPlanItem, ShoppingItem
 
 @require_POST
 @login_required
