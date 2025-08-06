@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold mb-4">My Pantry</h2>
+  <ul class="nav nav-tabs mb-4" id="pantryTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="my-pantry-tab" data-bs-toggle="tab" data-bs-target="#my-pantry" type="button" role="tab" aria-controls="my-pantry" aria-selected="true">My Pantry</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="suggestions-tab" data-bs-toggle="tab" data-bs-target="#suggestions" type="button" role="tab" aria-controls="suggestions" aria-selected="false">Recipe Suggestions</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="pantryTabsContent">
+    <div class="tab-pane fade show active" id="my-pantry" role="tabpanel" aria-labelledby="my-pantry-tab">
+      {% include 'pantry/pantry_list.html' %}
+    </div>
+    <div class="tab-pane fade" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
+      {% include 'pantry/pantry_suggest_recipes.html' %}
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+{% endblock %}

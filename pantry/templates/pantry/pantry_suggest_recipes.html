@@ -1,8 +1,47 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container py-4">
-  <h2 class="fw-bold mb-4">Recipe Suggestions Based on Your Pantry</h2>
-  <h4 class="mb-3">Recipes you can make now:</h4>
+<!-- Recipe Suggestions Tab Partial -->
+<h4 class="mb-3">Recipes you can make now:</h4>
+<!-- Recipe Suggestions Tab Partial -->
+<div class="row g-4 mb-4">
+  {% for recipe in recipes_only_pantry %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 shadow-lg border-0">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-bold mb-2">{{ recipe.recipe.title|default:recipe.recipe.strMeal }}</h5>
+          {% if recipe.match_percentage is not None %}
+            <span class="badge bg-primary">Match: {{ recipe.match_percentage }}%</span>
+          {% endif %}
+          <p class="card-text">{{ recipe.recipe.description|default:recipe.recipe.strInstructions|truncatewords:20 }}</p>
+          <ul class="list-unstyled mb-2">
+            {% if recipe.source == 'local' %}
+              {% for ingredient in recipe.recipe.ingredients.all %}
+                <li><span class="badge bg-light text-dark border">{{ ingredient.name }} ({{ ingredient.unit }})</span></li>
+              {% endfor %}
+            {% elif recipe.source == 'api' %}
+              {% for ing in recipe.api_ingredients %}
+                {% if ing %}
+                  <li><span class="badge bg-light text-dark border">{{ ing }}</span></li>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </ul>
+          {% if recipe.source == 'local' and recipe.recipe.pk %}
+            <a href="{% url 'recipe_detail' recipe.recipe.pk %}" class="btn btn-primary mt-auto">View Recipe</a>
+            <form method="post" action="{% url 'add_to_mealplan' %}" class="mt-2">
+              {% csrf_token %}
+              <input type="hidden" name="recipe_id" value="{{ recipe.recipe_id }}">
+              <button type="submit" class="btn btn-success btn-sm">Add to meal plan</button>
+            </form>
+          {% elif recipe.source == 'api' and recipe.recipe.strSource %}
+            <a href="{{ recipe.recipe.strSource }}" class="btn btn-primary mt-auto" target="_blank">View Recipe (API)</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="alert alert-info">No recipes can be made with only your pantry ingredients.</div></div>
+  {% endfor %}
+  </div>
+<!-- End Recipe Suggestions Tab Partial -->
   <div class="row g-4 mb-4">
     {% for recipe in recipes_only_pantry %}
       <div class="col-12 col-md-6 col-lg-4">
@@ -14,9 +53,17 @@
             {% endif %}
             <p class="card-text">{{ recipe.description|truncatewords:20 }}</p>
             <ul class="list-unstyled mb-2">
-              {% for ingredient in recipe.ingredients.all %}
-                <li><span class="badge bg-light text-dark border">{{ ingredient.name }} ({{ ingredient.unit }})</span></li>
-              {% endfor %}
+              {% if recipe.source == 'local' %}
+                {% for ingredient in recipe.ingredients.all %}
+                  <li><span class="badge bg-light text-dark border">{{ ingredient.name }} ({{ ingredient.unit }})</span></li>
+                {% endfor %}
+              {% elif recipe.source == 'api' %}
+                {% for ing in recipe.api_ingredients %}
+                  {% if ing %}
+                    <li><span class="badge bg-light text-dark border">{{ ing }}</span></li>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             </ul>
             <a href="{% url 'recipe_detail' recipe.recipe_id %}" class="btn btn-primary mt-auto">View Recipe</a>
             <form method="post" action="{% url 'add_to_mealplan' %}" class="mt-2">
@@ -44,26 +91,62 @@
             {% endif %}
             <p class="card-text">{{ item.recipe.description|truncatewords:20 }}</p>
             <ul class="list-unstyled mb-2">
-              {% for ingredient in item.recipe.ingredients.all %}
-                <li>
-                  <span class="badge {% if ingredient in item.missing_ingredients %}bg-danger{% else %}bg-light text-dark border{% endif %}">
-                    {{ ingredient.name }} ({{ ingredient.unit }})
-                  </span>
-                </li>
-              {% endfor %}
+              {% if item.source == 'local' %}
+                {% for ingredient in item.recipe.ingredients.all %}
+                  <li>
+                    <span class="badge {% if ingredient in item.missing_ingredients %}bg-danger{% else %}bg-light text-dark border{% endif %}">
+                      {{ ingredient.name }} ({{ ingredient.unit }})
+                    </span>
+                  </li>
+                {% endfor %}
+              {% elif item.source == 'api' %}
+                {% for ing in item.api_ingredients %}
+                  {% if ing %}
+                    <li><span class="badge bg-light text-dark border">{{ ing }}</span></li>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
             </ul>
-            <div class="mb-2">
-              <strong>Missing ingredients:</strong>
-              {% for ingredient in item.missing_ingredients %}
-                <span class="badge bg-danger">{{ ingredient.name }}</span>
-              {% endfor %}
+            {% if item.source == 'local' %}
+              <div class="mb-2">
+                <strong>Missing ingredients:</strong>
+                <ul class="ps-3">
+                  {% for ingredient in item.missing_ingredients %}
+                    <li>
+                      {{ ingredient.name }}
+                      {% if ingredient.amount %}
+                        <span class="badge bg-primary ms-2">{{ ingredient.amount }} {{ ingredient.unit }}</span>
+                      {% endif %}
+                      {% if ingredient.weight_in_grams %}
+                        <span class="badge bg-info text-dark ms-2">{{ ingredient.weight_in_grams }} g</span>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% elif item.source == 'api' %}
+              <div class="mb-2">
+                <strong>Missing ingredients:</strong>
+                <ul class="ps-3">
+                  {% for ing in item.missing_ingredients %}
+                    <li>{{ ing }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+            <div class="mt-auto d-flex flex-column gap-2">
+              {% if item.source == 'local' and item.recipe.pk %}
+                <a href="{% url 'recipe_detail' item.recipe.pk %}" class="btn btn-outline-primary">View Recipe</a>
+                <form method="post" action="{% url 'add_missing_to_shopping_list' item.recipe.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success mt-2">
+                    <i class="bi bi-cart-plus"></i> Generate Shopping List
+                  </button>
+                </form>
+              {% elif item.source == 'api' and item.recipe.strSource %}
+                <a href="{{ item.recipe.strSource }}" class="btn btn-outline-primary" target="_blank">View Recipe (API)</a>
+              {% endif %}
             </div>
-            <a href="{% url 'recipe_detail' item.recipe.pk %}" class="btn btn-outline-primary mt-auto">View Recipe</a>
-            <form method="post" action="{%% url 'add_to_mealplan' %%}" class="mt-2">
-              {% csrf_token %}
-              <input type="hidden" name="recipe_id" value="{{ item.recipe_id }}">
-              <button type="submit" class="btn btn-success btn-sm">Add to meal plan</button>
-            </form>
           </div>
         </div>
       </div>
@@ -72,4 +155,3 @@
     {% endfor %}
   </div>
 </div>
-{% endblock %}

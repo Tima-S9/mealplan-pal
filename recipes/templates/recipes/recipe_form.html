@@ -17,6 +17,55 @@
             </li>
           </ul>
           <form method="post" enctype="multipart/form-data">
+            {% if formset.management_form.errors %}
+              <div class="alert alert-warning">
+                <strong>Formset Management Errors:</strong>
+                <ul>
+                  {% for error in formset.management_form.errors.values %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+            {% for hidden in formset.hidden_fields %}
+              {% for error in hidden.errors %}
+                <div class="alert alert-warning">
+                  <strong>Hidden field error:</strong> {{ error }}
+                </div>
+              {% endfor %}
+            {% endfor %}
+            {% if form.errors %}
+              <div class="alert alert-danger">
+                <strong>There were errors in your form:</strong>
+                <ul>
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+            {% if formset.errors %}
+              <div class="alert alert-danger">
+                <strong>There were errors in your ingredients:</strong>
+                <ul>
+                  {% for form in formset.forms %}
+                    {% for field in form.visible_fields %}
+                      {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                      {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                      <li>{{ error }}</li>
+                    {% endfor %}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
             {% csrf_token %}
             <div class="tab-content" id="recipeTabContent">
               <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
@@ -45,29 +94,55 @@
               </div>
               <div class="tab-pane fade" id="ingredients" role="tabpanel" aria-labelledby="ingredients-tab">
                 <div class="border rounded p-3 bg-light mb-3">
-                  <h5 class="mb-3"><i class="bi bi-list-check"></i> Ingredients Checklist</h5>
-                  <div class="row">
-                    {% for ingredient in form.ingredients.field.queryset %}
-                      <div class="col-md-6 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" name="ingredients" value="{{ ingredient.pk }}" id="ingredient{{ ingredient.pk }}"
-                            {% if ingredient in form.initial.ingredients %}checked{% endif %}>
-                          <label class="form-check-label" for="ingredient{{ ingredient.pk }}">
-                            {{ ingredient.name }} <span class="badge bg-secondary ms-1">{{ ingredient.unit }}</span>
-                          </label>
-                        </div>
-                      </div>
+                  <h5 class="mb-3"><i class="bi bi-list-check"></i> Ingredients & Amounts</h5>
+                  {{ formset.management_form }}
+                  {# Render all hidden fields for all forms here to guarantee submission #}
+                  {% for ing_form in formset %}
+                    {% for hidden in ing_form.hidden_fields %}
+                      {{ hidden }}
                     {% endfor %}
+                  {% endfor %}
+                  <table class="table table-bordered align-middle" id="ingredients-table">
+                    <thead>
+                      <tr>
+                        <th>Ingredient</th>
+                        <th>Amount</th>
+                        <th>Delete?</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for ing_form in formset %}
+                        <tr>
+                          {# Render all hidden fields for this form #}
+                          {% for hidden in ing_form.hidden_fields %}
+                            <td style="display:none">{{ hidden }}</td>
+                          {% endfor %}
+                          <td>{{ ing_form.ingredient }}</td>
+                          <td>{{ ing_form.amount }}</td>
+                          <td>{% if ing_form.instance.pk %}{{ ing_form.DELETE }}{% endif %}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <small class="text-muted">Add, edit, or remove ingredients and their amounts for this recipe.</small>
+                  <div class="d-grid mt-3">
+                    <button type="button" class="btn btn-outline-success" id="confirm-ingredients-btn">Confirm Ingredients</button>
+                  </div>
+                  <div id="ingredients-summary" class="alert alert-info mt-3 d-none">
+                    <strong>Current Ingredients:</strong>
+                    <ul id="ingredients-list"></ul>
                   </div>
                 </div>
-                <div class="border rounded p-3 bg-white mb-3">
-                  <h6 class="mb-2"><i class="bi bi-plus-circle"></i> Add a missing ingredient</h6>
+                <div class="border rounded p-3 bg-white mb-3 mt-4">
+                  <h6 class="mb-2"><i class="bi bi-plus-circle"></i> Add ingredient not listed above</h6>
                   <div class="input-group mb-2">
                     <input type="text" class="form-control" name="new_ingredient" placeholder="Enter new ingredient name">
                     <input type="text" class="form-control" name="new_ingredient_unit" placeholder="Unit (e.g. g, pcs)">
+                    <input type="number" step="any" class="form-control" name="new_ingredient_amount" placeholder="Amount">
                   </div>
                   <small class="text-muted">If your ingredient is not listed, add it here and it will be included in your recipe.</small>
                 </div>
+              </div>
               </div>
             </div>
             <div class="d-grid mt-4">
@@ -81,13 +156,44 @@
 </div>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <script>
-  var triggerTabList = [].slice.call(document.querySelectorAll('#recipeTab button'));
-  triggerTabList.forEach(function (triggerEl) {
-    var tabTrigger = new bootstrap.Tab(triggerEl);
-    triggerEl.addEventListener('click', function (event) {
-      event.preventDefault();
-      tabTrigger.show();
+  document.addEventListener('DOMContentLoaded', function() {
+    var triggerTabList = [].slice.call(document.querySelectorAll('#recipeTab button'));
+    triggerTabList.forEach(function (triggerEl) {
+      var tabTrigger = new bootstrap.Tab(triggerEl);
+      triggerEl.addEventListener('click', function (event) {
+        event.preventDefault();
+        tabTrigger.show();
+      });
     });
+
+    // Confirm Ingredients button logic (robust for select or text input)
+    var confirmBtn = document.getElementById('confirm-ingredients-btn');
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function() {
+        var table = document.getElementById('ingredients-table');
+        var rows = table.querySelectorAll('tbody tr');
+        var summary = document.getElementById('ingredients-summary');
+        var list = document.getElementById('ingredients-list');
+        list.innerHTML = '';
+        var hasIngredients = false;
+        rows.forEach(function(row) {
+          // Find ingredient field (select or text input with name containing 'ingredient')
+          var ing = row.querySelector('select[name*="ingredient"], input[type="text"][name*="ingredient"]');
+          // Find amount field (number input or text input with name containing 'amount')
+          var amt = row.querySelector('input[type="number"], input[type="text"][name*="amount"]');
+          if (ing && amt && ing.value && amt.value) {
+            var text = ing.tagName === 'SELECT' ? ing.options[ing.selectedIndex].text : ing.value;
+            list.innerHTML += '<li>' + text + ' (' + amt.value + ')</li>';
+            hasIngredients = true;
+          }
+        });
+        if (hasIngredients) {
+          summary.classList.remove('d-none');
+        } else {
+          summary.classList.add('d-none');
+        }
+      });
+    }
   });
 </script>
 {% endblock %}

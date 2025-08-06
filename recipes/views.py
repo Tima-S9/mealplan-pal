@@ -1,4 +1,6 @@
-from .models import Recipe, SavedRecipe
+from .models import Recipe, SavedRecipe, RecipeIngredient, Ingredient
+from .forms import RecipeForm, RecipeIngredientForm
+from django.forms import inlineformset_factory, modelformset_factory
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 @login_required
@@ -31,7 +33,6 @@ def save_api_recipe(request):
         if api_data.get('meals'):
             meal = api_data['meals'][0]
         if meal:
-            from .models import Ingredient, RecipeIngredient
             for i in range(1, 21):
                 ing_name = meal.get(f'strIngredient{i}')
                 ing_measure = meal.get(f'strMeasure{i}')
@@ -110,30 +111,79 @@ def recipe_detail(request, pk):
 
 @login_required
 def recipe_create(request):
+    RecipeIngredientFormSet = inlineformset_factory(
+        Recipe,
+        RecipeIngredient,
+        form=RecipeIngredientForm,
+        extra=1,  # Always show one extra blank row
+        can_delete=True,
+        min_num=0,
+        validate_min=False
+    )
     if request.method == 'POST':
         form = RecipeForm(request.POST, request.FILES)
-        if form.is_valid():
+        recipe = Recipe()  # Unsaved instance for inline formset
+        formset = RecipeIngredientFormSet(request.POST, instance=recipe)
+        new_ingredient_name = request.POST.get('new_ingredient', '').strip()
+        new_ingredient_unit = request.POST.get('new_ingredient_unit', '').strip()
+        try:
+            new_ingredient_amount = float(request.POST.get('new_ingredient_amount', '').strip())
+        except Exception:
+            new_ingredient_amount = None
+        if form.is_valid() and formset.is_valid():
             recipe = form.save(commit=False)
             recipe.owner = request.user
             recipe.save()
             form.save_m2m()
+            formset.instance = recipe
+            formset.save()
+            # Add new ingredient if provided
+            if new_ingredient_name and new_ingredient_amount is not None:
+                ingredient, _ = Ingredient.objects.get_or_create(name=new_ingredient_name, defaults={'unit': new_ingredient_unit})
+                RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient, amount=new_ingredient_amount)
             return redirect('recipe_detail', pk=recipe.pk)
     else:
         form = RecipeForm()
-    return render(request, 'recipes/recipe_form.html', {'form': form})
+        recipe = Recipe()  # Unsaved instance for inline formset
+        formset = RecipeIngredientFormSet(instance=recipe)
+    return render(request, 'recipes/recipe_form.html', {'form': form, 'formset': formset})
 
 
 @login_required
 def recipe_update(request, pk):
     recipe = get_object_or_404(Recipe, pk=pk, owner=request.user)
+    RecipeIngredientFormSet = inlineformset_factory(
+        Recipe,
+        RecipeIngredient,
+        form=RecipeIngredientForm,
+        extra=1,  # Always show one extra blank row
+        can_delete=True,
+        min_num=0,
+        validate_min=False
+    )
     if request.method == 'POST':
         form = RecipeForm(request.POST, request.FILES, instance=recipe)
-        if form.is_valid():
+        formset = RecipeIngredientFormSet(request.POST, instance=recipe)
+        new_ingredient_name = request.POST.get('new_ingredient', '').strip()
+        new_ingredient_unit = request.POST.get('new_ingredient_unit', '').strip()
+        try:
+            new_ingredient_amount = float(request.POST.get('new_ingredient_amount', '').strip())
+        except Exception:
+            new_ingredient_amount = None
+        if form.is_valid() and formset.is_valid():
             form.save()
-            return redirect('recipe_detail', pk=recipe.pk)
+            formset.save()
+            # Add new ingredient if provided
+            if new_ingredient_name and new_ingredient_amount is not None:
+                ingredient, _ = Ingredient.objects.get_or_create(name=new_ingredient_name, defaults={'unit': new_ingredient_unit})
+                RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient, amount=new_ingredient_amount)
+            messages.success(request, 'Recipe updated successfully!')
+            # Redirect to 'My Recipes' tab on dashboard
+            return redirect('/recipes/dashboard/?search_tab=my')
     else:
         form = RecipeForm(instance=recipe)
-    return render(request, 'recipes/recipe_form.html', {'form': form, 'recipe': recipe})
+        formset = RecipeIngredientFormSet(instance=recipe)
+    return render(request, 'recipes/recipe_form.html', {'form': form, 'formset': formset, 'recipe': recipe})
 
 
 @login_required
@@ -141,6 +191,7 @@ def recipe_delete(request, pk):
     recipe = get_object_or_404(Recipe, pk=pk, owner=request.user)
     if request.method == 'POST':
         recipe.delete()
+        messages.success(request, 'Recipe deleted successfully!')
         return redirect('recipe_list')
     return render(request, 'recipes/recipe_confirm_delete.html', {'recipe': recipe})
 

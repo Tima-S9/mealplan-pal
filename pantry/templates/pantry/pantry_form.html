@@ -1,9 +1,28 @@
-{% extends "base.html" %}
-{% block content %}
-  <h2>{% if item %}Edit{% else %}Add{% endif %} Pantry Item</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">{% if item %}Update{% else %}Add{% endif %}</button>
-  </form>
-{% endblock %}
+
+<form method="post" action="{% if edit_mode and item %}{% url 'pantry_edit' item.pk %}{% else %}{% url 'pantry_add' %}{% endif %}" class="card card-body shadow-sm mb-4">
+  {% csrf_token %}
+  <div class="row g-2 align-items-end">
+    <div class="col-md-5">
+      <label for="id_ingredient_name" class="form-label mb-1">Ingredient</label>
+      {{ form.ingredient_name }}
+    </div>
+    <div class="col-md-3">
+      <label for="id_amount" class="form-label mb-1">Amount</label>
+      {{ form.amount }}
+    </div>
+    <div class="col-md-2">
+      <label for="id_unit" class="form-label mb-1">Unit</label>
+      {{ form.unit }}
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-success w-100 mt-3">{% if edit_mode %}Update{% else %}Add{% endif %}</button>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-md-5">
+      <label for="id_weight_in_grams" class="form-label mb-1">Weight (g) <span class="text-muted small">(optional)</span></label>
+      {{ form.weight_in_grams }}
+    </div>
+  </div>
+</form>
+

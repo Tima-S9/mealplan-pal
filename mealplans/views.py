@@ -1,5 +1,6 @@
 from recipes.models import Recipe
 from .models import MealPlanItem
+from pantry.models import PantryItem
 
 def mealplan_calendar(request):
     week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']

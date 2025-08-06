@@ -8,6 +8,7 @@ class PantryItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.FloatField()
+    weight_in_grams = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.amount} {self.ingredient.unit} {self.ingredient.name} for {self.user.username}"
