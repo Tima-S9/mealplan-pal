@@ -18,16 +18,16 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active bg-dark text-light{% endif %}" href="{% url 'home' %}">Home</a>
+              <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active fw-bold text-dark{% endif %}" href="{% url 'home' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'recipes_dashboard' %}active bg-dark text-light{% endif %}" href="{% url 'recipes_dashboard' %}">Recipes</a>
+              <a class="nav-link {% if request.resolver_match.url_name == 'recipes_dashboard' %}active fw-bold text-dark{% endif %}" href="{% url 'recipes_dashboard' %}">Recipes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'pantry_dashboard' %}active bg-dark text-light{% endif %}" href="{% url 'pantry_dashboard' %}">Pantry</a>
+              <a class="nav-link {% if request.resolver_match.url_name == 'pantry_dashboard' %}active fw-bold text-dark{% endif %}" href="{% url 'pantry_dashboard' %}">Pantry</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'mealplans_dashboard' %}active bg-dark text-light{% endif %}" href="{% url 'mealplans_dashboard' %}">Mealplans</a>
+              <a class="nav-link {% if request.resolver_match.url_name == 'mealplans_dashboard' %}active fw-bold text-dark{% endif %}" href="{% url 'mealplans_dashboard' %}">Mealplans</a>
             </li>
           </ul>
         </div>

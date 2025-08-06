@@ -1,3 +1,18 @@
+/* Homepage earthy background */
+.homepage-bg {
+  background: url('/static/img/home_bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+.homepage-bg .container {
+  background: rgba(255,255,255,0.85);
+  border-radius: 1.5rem;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 4px 24px rgba(42,77,105,0.10);
+}
 body {
   font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
   background-color: #f8f9fa;

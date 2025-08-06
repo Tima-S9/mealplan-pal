@@ -1,3 +1,21 @@
+from recipes.models import Recipe
+from .models import MealPlanItem
+
+def mealplan_calendar(request):
+    week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    meals = ['Breakfast', 'Lunch', 'Dinner']
+    recipes = Recipe.objects.filter(owner=request.user)
+    # For demo: get all mealplan items for the user (should be filtered by active plan)
+    mealplan_items = MealPlanItem.objects.filter(mealplan__owner=request.user)
+    slot_map = {}
+    for item in mealplan_items:
+        slot_map[(item.day, item.meal)] = item.recipe
+    return render(request, 'mealplans/calendar.html', {
+        'week_days': week_days,
+        'meals': meals,
+        'recipes': recipes,
+        'slot_map': slot_map,
+    })
 from recipes.models import Ingredient
 
 # Create shopping list from mealplan selected recipes

@@ -1,5 +1,20 @@
-from django.shortcuts import render, redirect, get_object_or_404
+
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from mealplans.models import MealPlan, MealPlanItem
+
+@require_POST
+@login_required
+def add_to_mealplan(request):
+    recipe_id = request.POST.get('recipe_id')
+    if not recipe_id:
+        return redirect('pantry_suggest_recipes')
+    # For demo: add to the user's most recent meal plan, or create one if none exists
+    mealplan, created = MealPlan.objects.get_or_create(owner=request.user, defaults={'title': 'Quick Add', 'start_date': None, 'end_date': None})
+    MealPlanItem.objects.create(mealplan=mealplan, recipe_id=recipe_id, day='Unassigned')
+    return redirect('mealplans_dashboard')
+
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import PantryItem
 from recipes.models import Recipe, Ingredient, RecipeIngredient
@@ -40,8 +55,15 @@ def pantry_suggest_recipes(request):
         if not has_pantry:
             continue  # Skip recipes with no pantry items
         missing = recipe_ingredient_pks - pantry_ingredient_pks
+        matched = recipe_ingredient_pks & pantry_ingredient_pks
+        total = len(recipe_ingredient_pks)
+        match_percentage = int((len(matched) / total) * 100) if total > 0 else 0
         if not missing:
-            recipes_only_pantry.append(recipe)
+            recipes_only_pantry.append({
+                'recipe': recipe,
+                'match_percentage': match_percentage,
+                'recipe_id': recipe.pk,
+            })
         else:
             missing_ingredients = Ingredient.objects.filter(pk__in=missing)
             missing_ids = list(missing)
@@ -49,6 +71,8 @@ def pantry_suggest_recipes(request):
                 'recipe': recipe,
                 'missing_ingredients': missing_ingredients,
                 'missing_ingredient_ids': missing_ids,
+                'match_percentage': match_percentage,
+                'recipe_id': recipe.pk,
             })
 
     return render(request, 'pantry/pantry_suggest_recipes.html', {

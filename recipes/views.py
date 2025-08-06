@@ -1,3 +1,52 @@
+from .models import Recipe, SavedRecipe
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+@login_required
+def save_api_recipe(request):
+    if request.method == 'POST':
+        api_id = request.POST.get('api_id')
+        title = request.POST.get('title')
+        image_url = request.POST.get('image_url')
+        category = request.POST.get('category')
+        area = request.POST.get('area')
+        source = request.POST.get('source')
+        # Check if already saved
+        if Recipe.objects.filter(title=title, owner=request.user).exists():
+            messages.info(request, 'You have already saved this recipe.')
+            return redirect(request.META.get('HTTP_REFERER', 'recipes_dashboard'))
+        # Create a new Recipe instance for the user
+        recipe = Recipe.objects.create(
+            title=title,
+            description=f"Imported from API ({category}, {area})",
+            owner=request.user,
+            is_public=False
+        )
+        # Optionally, download and save the image, or just store the URL if your model supports it
+        # Save ingredients from TheMealDB API
+        import requests
+        api_url = f'https://www.themealdb.com/api/json/v1/1/lookup.php?i={api_id}'
+        api_response = requests.get(api_url)
+        api_data = api_response.json()
+        meal = None
+        if api_data.get('meals'):
+            meal = api_data['meals'][0]
+        if meal:
+            from .models import Ingredient, RecipeIngredient
+            for i in range(1, 21):
+                ing_name = meal.get(f'strIngredient{i}')
+                ing_measure = meal.get(f'strMeasure{i}')
+                if ing_name and ing_name.strip():
+                    ing_obj, _ = Ingredient.objects.get_or_create(name=ing_name.strip(), defaults={'unit': ''})
+                    # Try to extract a float from the measure, fallback to 1.0
+                    try:
+                        amount = float(ing_measure.split()[0]) if ing_measure and ing_measure.split()[0].replace('.', '', 1).isdigit() else 1.0
+                    except Exception:
+                        amount = 1.0
+                    RecipeIngredient.objects.create(recipe=recipe, ingredient=ing_obj, amount=amount)
+        # Save as a SavedRecipe
+        SavedRecipe.objects.create(user=request.user, recipe=recipe)
+        messages.success(request, 'Recipe saved to your collection!')
+        return redirect(request.META.get('HTTP_REFERER', 'recipes_dashboard'))
 from django.shortcuts import render, redirect, get_object_or_404
 import requests
 from django.contrib.auth.decorators import login_required
@@ -11,7 +60,35 @@ class HomeView(TemplateView):
 
 
 def recipes_dashboard(request):
-    return render(request, 'recipes/dashboard.html')
+    from .models import Recipe
+    search_tab = request.GET.get('search_tab', 'my')
+    query = request.GET.get('q', '')
+    my_search_results = Recipe.objects.filter(owner=request.user)
+    community_search_results = Recipe.objects.filter(is_public=True).exclude(owner=request.user)
+    api_meals = []
+    api_query = ''
+    if search_tab == 'my' and query:
+        my_search_results = my_search_results.filter(title__icontains=query)
+    if search_tab == 'community' and query:
+        community_search_results = community_search_results.filter(title__icontains=query)
+    if search_tab == 'api':
+        api_query = query or 'chicken'
+        import requests
+        url = f'https://www.themealdb.com/api/json/v1/1/search.php?s={api_query}'
+        try:
+            response = requests.get(url, timeout=5)
+            data = response.json()
+            api_meals = data.get('meals') or []
+        except Exception:
+            api_meals = []
+    context = {
+        'search_tab': search_tab,
+        'query': query,
+        'my_search_results': my_search_results,
+        'community_search_results': community_search_results,
+        'meals': api_meals,
+    }
+    return render(request, 'recipes/dashboard.html', context)
 
 
 def get_context_data(self, **kwargs):
@@ -73,5 +150,7 @@ def external_recipes(request):
     url = f'https://www.themealdb.com/api/json/v1/1/search.php?s={query}'
     response = requests.get(url)
     data = response.json()
-    meals = data.get('meals', [])
+    meals = data.get('meals')
+    if meals is None:
+        meals = []
     return render(request, 'recipes/external_recipes.html', {'meals': meals, 'query': query})

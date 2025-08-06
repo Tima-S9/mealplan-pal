@@ -1,3 +1,20 @@
+# Add this import at the top
+from django.db import models
+
+# ...existing Recipe and other model definitions...
+
+# Allow users to save recipes created by others
+from django.conf import settings
+
+class SavedRecipe(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_recipes')
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='saved_by')
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'recipe')
+    def __str__(self):
+        return f"{self.user.username} saved {self.recipe.title}"
 from django.db import models
 from django.contrib.auth.models import User
 

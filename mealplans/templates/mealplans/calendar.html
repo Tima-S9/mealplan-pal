@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-4">Meal Plan Calendar</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th>Day</th>
+          <th>Breakfast</th>
+          <th>Lunch</th>
+          <th>Dinner</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for day in week_days %}
+        <tr>
+          <th>{{ day }}</th>
+          {% for meal in meals %}
+          <td id="{{ day|lower }}-{{ meal|lower }}" class="meal-slot" data-day="{{ day }}" data-meal="{{ meal }}">
+            {% with slot_recipe=slot_map|get_item:(day, meal) %}
+              {% if slot_recipe %}
+                <div class="assigned-recipe">
+                  <span class="badge bg-info">{{ slot_recipe.title }}</span>
+                </div>
+              {% endif %}
+            {% endwith %}
+          </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-4">
+    <h4>Available Recipes</h4>
+    <div class="row" id="recipe-list">
+      {% for recipe in recipes %}
+      <div class="col-md-3 mb-3">
+        <div class="card draggable-recipe" draggable="true" data-recipe-id="{{ recipe.pk }}">
+          {% if recipe.image %}
+          <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ recipe.title }}</h5>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<script>
+// Simple drag-and-drop logic (to be expanded with AJAX for saving)
+document.querySelectorAll('.draggable-recipe').forEach(function(card) {
+  card.addEventListener('dragstart', function(e) {
+    e.dataTransfer.setData('text/plain', card.dataset.recipeId);
+  });
+});
+document.querySelectorAll('.meal-slot').forEach(function(slot) {
+  slot.addEventListener('dragover', function(e) {
+    e.preventDefault();
+  });
+  slot.addEventListener('drop', function(e) {
+    e.preventDefault();
+    var recipeId = e.dataTransfer.getData('text/plain');
+    // AJAX call to assign recipeId to this slot (slot.dataset.day, slot.dataset.meal)
+    fetch("{% url 'assign_recipe_to_slot' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: 'day=' + encodeURIComponent(slot.dataset.day) + '&meal=' + encodeURIComponent(slot.dataset.meal) + '&recipe_id=' + encodeURIComponent(recipeId)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        slot.innerHTML = '<div class="assigned-recipe"><span class="badge bg-info">Recipe #' + recipeId + '</span></div>';
+      } else {
+        alert('Failed to assign recipe: ' + (data.error || 'Unknown error'));
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

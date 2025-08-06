@@ -1,14 +1,10 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="container mt-4">
-    <h2>Recipes</h2>
-    <form method="get" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="Search for recipes..." value="{{ query }}">
-            <button class="btn btn-primary" type="submit">Search</button>
-        </div>
-    </form>
-    {% if meals %}
+<div class="container mt-2">
+    <div class="mb-3">
+        <a href="https://www.themealdb.com/api.php" target="_blank" class="text-decoration-underline small text-secondary">
+            Powered by TheMealDB API
+        </a>
+    </div>
+    {% if meals|length > 0 %}
         <div class="row">
             {% for meal in meals %}
                 <div class="col-md-4 mb-4">
@@ -20,6 +16,16 @@
                                 Area: {{ meal.strArea }}<br>
                                 <a href="{{ meal.strSource|default:meal.strYoutube }}" target="_blank">View Recipe</a>
                             </p>
+                            <form method="post" action="{% url 'save_api_recipe' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="api_id" value="{{ meal.idMeal }}">
+                                <input type="hidden" name="title" value="{{ meal.strMeal }}">
+                                <input type="hidden" name="image_url" value="{{ meal.strMealThumb }}">
+                                <input type="hidden" name="category" value="{{ meal.strCategory }}">
+                                <input type="hidden" name="area" value="{{ meal.strArea }}">
+                                <input type="hidden" name="source" value="{{ meal.strSource|default:meal.strYoutube }}">
+                                <button type="submit" class="btn btn-outline-success btn-sm mt-2">Save Recipe</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -29,4 +35,3 @@
         <p>No recipes found for "{{ query }}".</p>
     {% endif %}
 </div>
-{% endblock %}
