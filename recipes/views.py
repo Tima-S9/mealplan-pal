@@ -17,13 +17,20 @@ def save_api_recipe(request):
             messages.info(request, 'You have already saved this recipe.')
             return redirect(request.META.get('HTTP_REFERER', 'recipes_dashboard'))
         # Create a new Recipe instance for the user
-        recipe = Recipe.objects.create(
+        # If the original recipe has an image, copy it
+        original_recipe = Recipe.objects.filter(title=title).exclude(owner=request.user).first()
+        recipe = Recipe(
             title=title,
             description=f"Imported from API ({category}, {area})",
             owner=request.user,
             is_public=False
         )
-        # Optionally, download and save the image, or just store the URL if your model supports it
+        if original_recipe and original_recipe.image:
+            from django.core.files.base import ContentFile
+            image_content = original_recipe.image.read()
+            image_name = original_recipe.image.name.split('/')[-1]
+            recipe.image.save(image_name, ContentFile(image_content), save=False)
+        recipe.save()
         # Save ingredients from TheMealDB API
         import requests
         api_url = f'https://www.themealdb.com/api/json/v1/1/lookup.php?i={api_id}'

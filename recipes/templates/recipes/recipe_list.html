@@ -4,10 +4,6 @@
       <div class="card h-100 shadow-lg border-0 recipe-card">
         {% if recipe.image %}
           <img src="{{ recipe.image.url }}" class="card-img-top rounded-top recipe-img" alt="{{ recipe.title }}">
-        {% else %}
-          <div class="bg-light d-flex align-items-center justify-content-center" style="height: 220px;">
-            <span class="text-muted">No image</span>
-          </div>
         {% endif %}
         <div class="card-body d-flex flex-column">
           <h4 class="card-title fw-bold mb-2">{{ recipe.title }}</h4>

@@ -44,12 +44,13 @@ def add_to_shopping_list(request):
             messages.error(request, 'API recipe is missing a title and cannot be saved.')
             return redirect('pantry_dashboard')
         description = meal.get('strInstructions', '')
-        recipe = Recipe.objects.create(
+        recipe = Recipe(
             title=title.strip(),
             description=description,
             owner=request.user,
             is_public=False
         )
+        recipe.save()
         for i in range(1, 21):
             ing_name = meal.get(f'strIngredient{i}')
             ing_measure = meal.get(f'strMeasure{i}')
