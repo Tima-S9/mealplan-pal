@@ -46,6 +46,15 @@
               <form method="post" action="{% url 'add_to_shopping_list' %}">
                 {% csrf_token %}
                 <input type="hidden" name="api_id" value="{{ recipe.recipe.idMeal }}">
+                <div class="mb-2">
+                  <label for="mealplan_id_{{ recipe.recipe.idMeal }}" class="form-label mb-1">Add to Meal Plan (Week):</label>
+                  <select name="mealplan_id" id="mealplan_id_{{ recipe.recipe.idMeal }}" class="form-select form-select-sm" required>
+                    <option value="">-- Select Week --</option>
+                    {% for plan in plans %}
+                      <option value="{{ plan.id }}">Week of {{ plan.week_start_date }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
                 <button type="submit" class="btn btn-success btn-sm">Generate Shopping List</button>
               </form>
             {% endif %}
@@ -136,6 +145,15 @@
                 <form method="post" action="{% url 'add_to_shopping_list' %}">
                 {% csrf_token %}
                 <input type="hidden" name="api_id" value="{{ item.recipe.idMeal }}">
+                <div class="mb-2">
+                  <label for="mealplan_id_{{ item.recipe.idMeal }}" class="form-label mb-1">Add to Meal Plan (Week):</label>
+                  <select name="mealplan_id" id="mealplan_id_{{ item.recipe.idMeal }}" class="form-select form-select-sm" required>
+                    <option value="">-- Select Week --</option>
+                    {% for plan in plans %}
+                      <option value="{{ plan.id }}">Week of {{ plan.week_start_date }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
                 <button type="submit" class="btn btn-success btn-sm">Generate Shopping List</button>
               </form>
                 {% if item.recipe.strSource and item.recipe.strSource|slice:":4" == "http" %}

@@ -3,8 +3,27 @@
 {% block content %}
 <div class="container py-4">
   <h2 class="mb-4">Shopping List</h2>
+  <form method="get" class="mb-4">
+    <div class="row align-items-end">
+      <div class="col-md-6 col-lg-4">
+        <label for="mealplan_id" class="form-label">Select Week</label>
+        <select name="mealplan_id" id="mealplan_id" class="form-select" onchange="this.form.submit()">
+          {% for plan in plans %}
+            <option value="{{ plan.id }}" {% if selected_plan and plan.id == selected_plan.id %}selected{% endif %}>Week of {{ plan.week_start_date }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Go</button>
+      </div>
+    </div>
+  </form>
+  {% if selected_plan %}
+    <div class="mb-3"><strong>Week of:</strong> {{ selected_plan.week_start_date }}</div>
+  {% endif %}
   <form method="post">
     {% csrf_token %}
+    <input type="hidden" name="mealplan_id" value="{{ selected_plan.id }}">
     <ul class="list-group">
       {% for item in shopping_items %}
         <li class="list-group-item d-flex align-items-center justify-content-between">

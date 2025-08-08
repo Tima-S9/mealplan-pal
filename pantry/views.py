@@ -63,10 +63,17 @@ def add_to_shopping_list(request):
         SavedRecipe.objects.create(user=request.user, recipe=recipe)
     # Now generate the shopping list (add all ingredients to ShoppingItem)
     from mealplans.models import ShoppingItem, MealPlan
-    # Get or create the user's current meal plan (for simplicity, use the most recent or create one)
-    import datetime
-    today = datetime.date.today()
-    mealplan, _ = MealPlan.objects.get_or_create(owner=request.user, defaults={'week_start_date': today})
+    # Use mealplan_id from POST if provided, else require user to select
+    mealplan_id = request.POST.get('mealplan_id')
+    if not mealplan_id:
+        from django.contrib import messages
+        messages.error(request, 'Please select a week (meal plan) to add ingredients to your shopping list.')
+        return redirect(reverse('shopping_list'))
+    mealplan = MealPlan.objects.filter(owner=request.user, id=mealplan_id).first()
+    if not mealplan:
+        from django.contrib import messages
+        messages.error(request, 'Selected meal plan does not exist.')
+        return redirect(reverse('shopping_list'))
     added_count = 0
     for ingredient in recipe.ingredients.all():
         obj, created = ShoppingItem.objects.get_or_create(mealplan=mealplan, ingredient=ingredient, defaults={'total_amount': 1.0})

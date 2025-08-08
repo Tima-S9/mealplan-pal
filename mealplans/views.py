@@ -51,20 +51,19 @@ def index(request):
 
 
 @login_required
-def mealplan_list(request):
-    plans = MealPlan.objects.filter(owner=request.user)
-    return render(request, 'mealplans/mealplan_list.html', {'plans': plans})
-
 
 @login_required
-def mealplan_create(request):
+def mealplan_list(request):
+    # For the unified tab: show the create form and the list
     from recipes.models import Recipe, RecipeIngredient, Ingredient
     week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     recipes = Recipe.objects.filter(owner=request.user)
+    plans = MealPlan.objects.filter(owner=request.user)
     shopping_ingredients = None
     missing_ingredient_ids = []
 
     if request.method == 'POST':
+        week_start_date = request.POST.get('week_start_date')
         selected_recipe_pks = []
         for day in week_days:
             pk = request.POST.get(f'recipe_{day}')
@@ -72,10 +71,8 @@ def mealplan_create(request):
                 selected_recipe_pks.append(pk)
         selected_recipes = Recipe.objects.filter(pk__in=selected_recipe_pks)
 
-        # Create a new MealPlan for this week
-        import datetime
-        today = datetime.date.today()
-        mealplan = MealPlan.objects.create(owner=request.user, week_start_date=today)
+        # Create a new MealPlan for the selected week
+        mealplan = MealPlan.objects.create(owner=request.user, week_start_date=week_start_date)
 
         # Add MealPlanItems for each selected recipe
         for day, pk in zip(week_days, selected_recipe_pks):
@@ -103,11 +100,13 @@ def mealplan_create(request):
         from django.urls import reverse
         return redirect(reverse('shopping_list'))
 
-    return render(request, 'mealplans/mealplan_create.html', {
+    return render(request, 'mealplans/mealplan_unified.html', {
         'week_days': week_days,
         'recipes': recipes,
-        'missing_ingredient_ids': [],
+        'plans': plans,
     })
+
+
 
 
 @login_required
@@ -134,11 +133,25 @@ def mealplan_delete(request, pk):
 
 @login_required
 def shopping_list(request):
-    items = ShoppingItem.objects.filter(mealplan__owner=request.user)
+    # Get all meal plans for the user, order by week
+    plans = MealPlan.objects.filter(owner=request.user).order_by('-week_start_date')
+    # Get selected mealplan_id from GET or POST
+    mealplan_id = request.GET.get('mealplan_id') or request.POST.get('mealplan_id')
+    selected_plan = None
+    if mealplan_id:
+        selected_plan = MealPlan.objects.filter(owner=request.user, id=mealplan_id).first()
+    if not selected_plan and plans.exists():
+        selected_plan = plans.first()
+    # Only show items for the selected plan
+    items = ShoppingItem.objects.filter(mealplan=selected_plan) if selected_plan else []
     if request.method == 'POST':
         for item in items:
             checked = request.POST.get(f'checked_{item.pk}') == 'on'
             if item.checked != checked:
                 item.checked = checked
                 item.save()
-    return render(request, 'mealplans/shopping_list.html', {'shopping_items': items})
+    return render(request, 'mealplans/shopping_list.html', {
+        'shopping_items': items,
+        'plans': plans,
+        'selected_plan': selected_plan,
+    })

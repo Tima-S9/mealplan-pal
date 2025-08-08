@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
   <h2>My Meal Plans</h2>
-  <a href="{% url 'mealplan_create' %}" class="btn btn-success">New Meal Plan</a>
   <ul>
     {% for plan in plans %}
       <li>
