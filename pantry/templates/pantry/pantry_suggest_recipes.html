@@ -1,5 +1,10 @@
 <!-- Recipe Suggestions Tab Partial -->
-<h4 class="mb-3">Recipes you can make now:</h4>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4 class="mb-0">Recipes you can make now:</h4>
+  <a href="{% url 'mealplan_create' %}" class="btn btn-outline-success btn-lg ms-3">
+    <i class="bi bi-calendar-plus"></i> Create Meal Plan & Shopping List
+  </a>
+</div>
 <!-- Recipe Suggestions Tab Partial -->
 <div class="row g-4 mb-4">
   {% for recipe in recipes_only_pantry %}
@@ -46,15 +51,6 @@
               <form method="post" action="{% url 'add_to_shopping_list' %}">
                 {% csrf_token %}
                 <input type="hidden" name="api_id" value="{{ recipe.recipe.idMeal }}">
-                <div class="mb-2">
-                  <label for="mealplan_id_{{ recipe.recipe.idMeal }}" class="form-label mb-1">Add to Meal Plan (Week):</label>
-                  <select name="mealplan_id" id="mealplan_id_{{ recipe.recipe.idMeal }}" class="form-select form-select-sm" required>
-                    <option value="">-- Select Week --</option>
-                    {% for plan in plans %}
-                      <option value="{{ plan.id }}">Week of {{ plan.week_start_date }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
                 <button type="submit" class="btn btn-success btn-sm">Generate Shopping List</button>
               </form>
             {% endif %}
@@ -145,15 +141,6 @@
                 <form method="post" action="{% url 'add_to_shopping_list' %}">
                 {% csrf_token %}
                 <input type="hidden" name="api_id" value="{{ item.recipe.idMeal }}">
-                <div class="mb-2">
-                  <label for="mealplan_id_{{ item.recipe.idMeal }}" class="form-label mb-1">Add to Meal Plan (Week):</label>
-                  <select name="mealplan_id" id="mealplan_id_{{ item.recipe.idMeal }}" class="form-select form-select-sm" required>
-                    <option value="">-- Select Week --</option>
-                    {% for plan in plans %}
-                      <option value="{{ plan.id }}">Week of {{ plan.week_start_date }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
                 <button type="submit" class="btn btn-success btn-sm">Generate Shopping List</button>
               </form>
                 {% if item.recipe.strSource and item.recipe.strSource|slice:":4" == "http" %}

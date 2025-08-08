@@ -1,5 +1,31 @@
+
+from django import forms
+from .models import MealPlan, MealPlanItem
+
+# Simple MealPlan creation form
+class SimpleMealPlanForm(forms.ModelForm):
+    class Meta:
+        model = MealPlan
+        fields = ['week_start_date']
+
+from django.contrib.auth.decorators import login_required
+
+# View for creating a new meal plan
+@login_required
+def mealplan_create(request):
+    if request.method == 'POST':
+        form = SimpleMealPlanForm(request.POST)
+        if form.is_valid():
+            mealplan = form.save(commit=False)
+            mealplan.owner = request.user
+            mealplan.save()
+            from django.urls import reverse
+            return redirect(reverse('mealplan_list'))
+    else:
+        form = SimpleMealPlanForm()
+    return render(request, 'mealplans/mealplan_create.html', {'form': form})
 from recipes.models import Recipe
-from .models import MealPlanItem
+from .models import MealPlan, MealPlanItem
 from pantry.models import PantryItem
 
 def mealplan_calendar(request):

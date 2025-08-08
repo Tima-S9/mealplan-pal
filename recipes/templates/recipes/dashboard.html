@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container py-5">
-  <h2 class="fw-bold mb-4">Recipes</h2>
-  <div class="d-flex justify-content-end mb-3">
-    <a href="{% url 'recipe_create' %}" class="btn btn-success">Create Recipe</a>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold mb-0">Recipes</h2>
+    <div class="d-flex gap-2">
+      <a href="{% url 'mealplan_list' %}" class="btn btn-outline-success btn-lg">
+        <i class="bi bi-calendar-plus"></i> Create Meal Plan & Shopping List
+      </a>
+      <a href="{% url 'recipe_create' %}" class="btn btn-success">Create Recipe</a>
+    </div>
   </div>
   <!-- Search Tabs -->
   <ul class="nav nav-tabs mb-4" id="recipeSearchTabs" role="tablist">
