@@ -1,3 +1,85 @@
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from .models import PantryItem
+from .forms import PantryItemForm
+from mealplans.models import MealPlan, MealPlanItem, ShoppingItem
+from recipes.models import Recipe, Ingredient, RecipeIngredient, SavedRecipe
+
+# --- Add this view for API recipe shopping list generation ---
+
+
+@login_required
+@require_POST
+def add_to_shopping_list(request):
+    api_id = request.POST.get('api_id')
+    if not api_id:
+        from django.contrib import messages
+        messages.error(request, 'No API recipe ID provided.')
+        return redirect('pantry_dashboard')
+    # Check if already saved
+    from recipes.models import Recipe, Ingredient, RecipeIngredient
+    if Recipe.objects.filter(title__icontains=api_id, owner=request.user).exists():
+        recipe = Recipe.objects.filter(title__icontains=api_id, owner=request.user).first()
+    else:
+        # Save the API recipe using the same logic as save_api_recipe, with error handling for missing title
+        import requests
+        api_url = f'https://www.themealdb.com/api/json/v1/1/lookup.php?i={api_id}'
+        api_response = requests.get(api_url)
+        api_data = api_response.json()
+        meal = None
+        if api_data.get('meals'):
+            meal = api_data['meals'][0]
+        if not meal:
+            from django.contrib import messages
+            messages.error(request, 'Could not fetch recipe from API.')
+            return redirect('pantry_dashboard')
+        title = meal.get('strMeal')
+        if not title or not title.strip():
+            from django.contrib import messages
+            messages.error(request, 'API recipe is missing a title and cannot be saved.')
+            return redirect('pantry_dashboard')
+        description = meal.get('strInstructions', '')
+        recipe = Recipe.objects.create(
+            title=title.strip(),
+            description=description,
+            owner=request.user,
+            is_public=False
+        )
+        for i in range(1, 21):
+            ing_name = meal.get(f'strIngredient{i}')
+            ing_measure = meal.get(f'strMeasure{i}')
+            if ing_name and ing_name.strip():
+                ing_obj, _ = Ingredient.objects.get_or_create(name=ing_name.strip(), defaults={'unit': ''})
+                try:
+                    amount = float(ing_measure.split()[0]) if ing_measure and ing_measure.split()[0].replace('.', '', 1).isdigit() else 1.0
+                except Exception:
+                    amount = 1.0
+                RecipeIngredient.objects.create(recipe=recipe, ingredient=ing_obj, amount=amount)
+        SavedRecipe.objects.create(user=request.user, recipe=recipe)
+    # Now generate the shopping list (add all ingredients to ShoppingItem)
+    from mealplans.models import ShoppingItem, MealPlan
+    # Get or create the user's current meal plan (for simplicity, use the most recent or create one)
+    import datetime
+    today = datetime.date.today()
+    mealplan, _ = MealPlan.objects.get_or_create(owner=request.user, defaults={'week_start_date': today})
+    added_count = 0
+    for ingredient in recipe.ingredients.all():
+        obj, created = ShoppingItem.objects.get_or_create(mealplan=mealplan, ingredient=ingredient, defaults={'total_amount': 1.0})
+        if created:
+            added_count += 1
+    from django.contrib import messages
+    if added_count:
+        messages.success(request, f"{added_count} ingredient(s) added to your shopping list.")
+    else:
+        messages.info(request, "All ingredients were already in your shopping list.")
+    # Redirect to the main shopping list tab in mealplans for seamless UX
+    from django.urls import reverse
+    return redirect(reverse('shopping_list'))
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import PantryItem

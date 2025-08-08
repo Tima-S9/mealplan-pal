@@ -72,31 +72,36 @@ def mealplan_create(request):
                 selected_recipe_pks.append(pk)
         selected_recipes = Recipe.objects.filter(pk__in=selected_recipe_pks)
 
-        # Aggregate ingredients and amounts
+        # Create a new MealPlan for this week
+        import datetime
+        today = datetime.date.today()
+        mealplan = MealPlan.objects.create(owner=request.user, week_start_date=today)
+
+        # Add MealPlanItems for each selected recipe
+        for day, pk in zip(week_days, selected_recipe_pks):
+            if pk:
+                MealPlanItem.objects.create(mealplan=mealplan, recipe_id=pk, day_of_week=day)
+
+        # Aggregate ingredients and add to ShoppingItem
         ingredient_totals = {}
-        all_ingredient_pks = set()
         for recipe in selected_recipes:
             for ri in RecipeIngredient.objects.filter(recipe=recipe):
-                key = (ri.ingredient.pk, ri.ingredient.name, ri.ingredient.unit)
+                key = (ri.ingredient.pk, ri.ingredient)
                 if key not in ingredient_totals:
                     ingredient_totals[key] = ri.amount
                 else:
                     ingredient_totals[key] += ri.amount
-                all_ingredient_pks.add(ri.ingredient.pk)
-        shopping_ingredients = [
-            {'name': name, 'unit': unit, 'total_amount': round(amount, 2)}
-            for (_, name, unit), amount in ingredient_totals.items()
-        ]
-        # Get user's pantry ingredient PKs
-        pantry_items = PantryItem.objects.filter(user=request.user)
-        pantry_ingredient_pks = set(item.ingredient.pk for item in pantry_items)
-        missing_ingredient_ids = list(all_ingredient_pks - pantry_ingredient_pks)
-        return render(request, 'mealplans/mealplan_create.html', {
-            'week_days': week_days,
-            'recipes': recipes,
-            'shopping_ingredients': shopping_ingredients,
-            'missing_ingredient_ids': missing_ingredient_ids,
-        })
+
+        for (ingredient_pk, ingredient), amount in ingredient_totals.items():
+            ShoppingItem.objects.update_or_create(
+                mealplan=mealplan,
+                ingredient=ingredient,
+                defaults={'total_amount': amount}
+            )
+
+        # Redirect to the main shopping list tab
+        from django.urls import reverse
+        return redirect(reverse('shopping_list'))
 
     return render(request, 'mealplans/mealplan_create.html', {
         'week_days': week_days,

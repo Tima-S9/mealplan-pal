@@ -32,7 +32,7 @@ def save_api_recipe(request):
         meal = None
         if api_data.get('meals'):
             meal = api_data['meals'][0]
-        if meal:
+        if isinstance(meal, dict):
             for i in range(1, 21):
                 ing_name = meal.get(f'strIngredient{i}')
                 ing_measure = meal.get(f'strMeasure{i}')
@@ -44,6 +44,8 @@ def save_api_recipe(request):
                     except Exception:
                         amount = 1.0
                     RecipeIngredient.objects.create(recipe=recipe, ingredient=ing_obj, amount=amount)
+        elif meal is not None:
+            messages.error(request, 'Unexpected API response format. Could not save ingredients.')
         # Save as a SavedRecipe
         SavedRecipe.objects.create(user=request.user, recipe=recipe)
         messages.success(request, 'Recipe saved to your collection!')
