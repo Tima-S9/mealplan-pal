@@ -1,0 +1,20 @@
+/* Pantry Tabs Custom Styles */
+.pantry-tab-btn {
+  background: transparent;
+  color: #f5e9da;
+  border: none;
+  border-radius: 1rem 1rem 0 0;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.pantry-tab-btn.active, .pantry-tab-btn[aria-selected="true"] {
+  background: #fffbe6;
+  color: #2a4d69;
+  border: 1.5px solid #f5e9da;
+  box-shadow: 0 2px 8px rgba(42,77,105,0.08);
+}
+.pantry-tab-btn:not(.active):not([aria-selected="true"]) {
+  background: transparent;
+  color: #f5e9da;
+}

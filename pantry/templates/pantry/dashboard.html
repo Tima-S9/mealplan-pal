@@ -4,13 +4,17 @@
   <h2 class="fw-bold mb-4">Pantry Dashboard</h2>
   <div class="row mb-4">
     <div class="col-md-6 col-lg-4 mb-3">
-      <a href="{% url 'pantry_list' %}" class="btn btn-info btn-lg w-100"><i class="bi bi-box"></i> My Pantry</a>
+      <a href="{% url 'pantry_list' %}" class="btn btn-lg w-100"
+         style="{% if not tab or tab == 'my-pantry' %}background: #fffbe6; color: #2a4d69; border: 1.5px solid #f5e9da;{% else %}background: transparent; color: #f5e9da; border: 1.5px solid transparent;{% endif %} border-radius: 1rem; font-weight: 600; font-size: 1.1rem;">
+         <i class="bi bi-box"></i> My Pantry</a>
     </div>
     <div class="col-md-6 col-lg-4 mb-3">
       <a href="{% url 'pantry_add' %}" class="btn btn-success btn-lg w-100"><i class="bi bi-plus-circle"></i> Add Pantry Item</a>
     </div>
     <div class="col-md-6 col-lg-4 mb-3">
-      <a href="{% url 'pantry_suggest_recipes' %}" class="btn btn-warning btn-lg w-100"><i class="bi bi-lightbulb"></i> Recipe Suggestions</a>
+      <a href="{% url 'pantry_suggest_recipes' %}" class="btn btn-lg w-100"
+         style="{% if tab == 'suggestions' %}background: #fffbe6; color: #2a4d69; border: 1.5px solid #f5e9da;{% else %}background: transparent; color: #f5e9da; border: 1.5px solid transparent;{% endif %} border-radius: 1rem; font-weight: 600; font-size: 1.1rem;">
+         <i class="bi bi-lightbulb"></i> Recipe Suggestions</a>
     </div>
     <div class="col-md-6 col-lg-4 mb-3">
       <a href="{% url 'shopping_list' %}" class="btn btn-secondary btn-lg w-100"><i class="bi bi-cart"></i> Shopping List</a>

@@ -1,43 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="homepage-bg">
-    <div class="container py-5">
+  <div class="homepage-bg py-5">
     <div class="row mb-4">
       <div class="col text-center">
         <h1 class="display-4">Welcome to Pantry Pal!</h1>
-        <p class="lead">Plan your meals, manage your pantry, and generate shopping lists with ease.</p>
+        <p class="lead" style="color: #f5e9da;">Plan your meals, manage your pantry, and generate shopping lists with ease.</p>
         <a href="{% url 'recipes_dashboard' %}" class="btn btn-info btn-lg me-2">Recipes</a>
         <a href="{% url 'pantry_dashboard' %}" class="btn btn-success btn-lg me-2">My Pantry</a>
         <a href="{% url 'mealplans_dashboard' %}" class="btn btn-primary btn-lg">Mealplans</a>
       </div>
     </div>
-    <h2 class="mb-4">Featured Recipes</h2>
-    <div class="row">
-      {% for recipe in recipes %}
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 shadow">
-            {% if recipe.image %}
-              <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
-            {% endif %}
-            <div class="card-body">
-              <h5 class="card-title">{{ recipe.title }}</h5>
-              <p class="card-text">{{ recipe.description|truncatewords:20 }}</p>
-              <ul class="list-unstyled">
-                {% for ingredient in recipe.ingredients.all %}
-                  <li>{{ ingredient.name }} ({{ ingredient.unit }})</li>
-                {% endfor %}
-              </ul>
-              {% if recipe.calories %}
-                <p><strong>Calories:</strong> {{ recipe.calories }}</p>
-              {% endif %}
-              <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-outline-primary">View Recipe</a>
-            </div>
-          </div>
-        </div>
-      {% empty %}
-        <p>No recipes found.</p>
-      {% endfor %}
-    </div>
-    </div>
+    {# Featured Recipes and recipe cards removed as requested #}
   </div>
 {% endblock %}

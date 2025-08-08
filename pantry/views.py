@@ -288,6 +288,64 @@ def pantry_dashboard(request):
         'edit_mode': edit_mode,
         'recipes_only_pantry': recipes_only_pantry,
         'recipes_with_missing': recipes_with_missing,
+        'tab': 'my-pantry',
+    }
+    return render(request, 'pantry/pantry_tabs.html', context)
+
+# Recipe Suggestions tab view for dynamic highlighting
+@login_required
+def pantry_suggest_recipes(request):
+    from .models import PantryItem
+    from recipes.models import Recipe, Ingredient
+    from .forms import PantryItemForm
+    items = PantryItem.objects.filter(user=request.user)
+    form = PantryItemForm()
+    pantry_items = items
+    pantry_ingredient_pks = set(item.ingredient.pk for item in pantry_items)
+    pantry_ingredient_names = set(item.ingredient.name.lower() for item in pantry_items)
+    recipes_only_pantry = []
+    recipes_with_missing = []
+    my_recipes = Recipe.objects.filter(owner=request.user)
+    community_recipes = Recipe.objects.filter(is_public=True).exclude(owner=request.user)
+    try:
+        from recipes.models import SavedRecipe
+        saved_recipes = Recipe.objects.filter(saved_by__user=request.user)
+    except ImportError:
+        saved_recipes = Recipe.objects.none()
+    all_recipes = set(list(my_recipes) + list(community_recipes) + list(saved_recipes))
+    for recipe in all_recipes:
+        recipe_ingredient_pks = set(recipe.ingredients.values_list('pk', flat=True))
+        has_pantry = bool(recipe_ingredient_pks & pantry_ingredient_pks)
+        if not has_pantry:
+            continue
+        missing = recipe_ingredient_pks - pantry_ingredient_pks
+        matched = recipe_ingredient_pks & pantry_ingredient_pks
+        total = len(recipe_ingredient_pks)
+        match_percentage = int((len(matched) / total) * 100) if total > 0 else 0
+        if not missing:
+            recipes_only_pantry.append({
+                'recipe': recipe,
+                'match_percentage': match_percentage,
+                'recipe_id': recipe.pk,
+                'source': 'local',
+            })
+        else:
+            missing_ingredients = Ingredient.objects.filter(pk__in=missing)
+            missing_ids = list(missing)
+            recipes_with_missing.append({
+                'recipe': recipe,
+                'missing_ingredients': missing_ingredients,
+                'missing_ingredient_ids': missing_ids,
+                'match_percentage': match_percentage,
+                'recipe_id': recipe.pk,
+                'source': 'local',
+            })
+    context = {
+        'items': items,
+        'form': form,
+        'recipes_only_pantry': recipes_only_pantry,
+        'recipes_with_missing': recipes_with_missing,
+        'tab': 'suggestions',
     }
     return render(request, 'pantry/pantry_tabs.html', context)
 
@@ -300,7 +358,57 @@ def index(request):
 @login_required
 def pantry_list(request):
     items = PantryItem.objects.filter(user=request.user)
-    return render(request, 'pantry/pantry_list.html', {'items': items})
+    form = PantryItemForm()
+    pantry_ingredient_pks = set(item.ingredient.pk for item in items)
+    pantry_ingredient_names = set(item.ingredient.name.lower() for item in items)
+    recipes_only_pantry = []
+    recipes_with_missing = []
+    # My recipes
+    my_recipes = Recipe.objects.filter(owner=request.user)
+    # Community recipes (public, not owned by user)
+    community_recipes = Recipe.objects.filter(is_public=True).exclude(owner=request.user)
+    # Saved recipes (recipes user has saved from others)
+    try:
+        from recipes.models import SavedRecipe
+        saved_recipes = Recipe.objects.filter(saved_by__user=request.user)
+    except ImportError:
+        saved_recipes = Recipe.objects.none()
+    all_recipes = set(list(my_recipes) + list(community_recipes) + list(saved_recipes))
+    for recipe in all_recipes:
+        recipe_ingredient_pks = set(recipe.ingredients.values_list('pk', flat=True))
+        has_pantry = bool(recipe_ingredient_pks & pantry_ingredient_pks)
+        if not has_pantry:
+            continue
+        missing = recipe_ingredient_pks - pantry_ingredient_pks
+        matched = recipe_ingredient_pks & pantry_ingredient_pks
+        total = len(recipe_ingredient_pks)
+        match_percentage = int((len(matched) / total) * 100) if total > 0 else 0
+        if not missing:
+            recipes_only_pantry.append({
+                'recipe': recipe,
+                'match_percentage': match_percentage,
+                'recipe_id': recipe.pk,
+                'source': 'local',
+            })
+        else:
+            missing_ingredients = Ingredient.objects.filter(pk__in=missing)
+            missing_ids = list(missing)
+            recipes_with_missing.append({
+                'recipe': recipe,
+                'missing_ingredients': missing_ingredients,
+                'missing_ingredient_ids': missing_ids,
+                'match_percentage': match_percentage,
+                'recipe_id': recipe.pk,
+                'source': 'local',
+            })
+    context = {
+        'items': items,
+        'form': form,
+        'recipes_only_pantry': recipes_only_pantry,
+        'recipes_with_missing': recipes_with_missing,
+        'tab': 'my-pantry',
+    }
+    return render(request, 'pantry/pantry_tabs.html', context)
 
 
 @login_required

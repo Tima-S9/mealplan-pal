@@ -1,23 +1,28 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="container py-5">
-  <h2 class="fw-bold mb-4">My Pantry</h2>
-  <ul class="nav nav-tabs mb-4" id="pantryTabs" role="tablist">
+  <h2 class="fw-bold mb-4" style="color: #f5e9da;">My Pantry</h2>
+  <link rel="stylesheet" href="{% static 'css/pantry-tabs.css' %}">
+  <ul class="nav mb-4" id="pantryTabs" role="tablist" style="border-bottom: none;">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="my-pantry-tab" data-bs-toggle="tab" data-bs-target="#my-pantry" type="button" role="tab" aria-controls="my-pantry" aria-selected="true">My Pantry</button>
+      <a class="nav-link {% if not tab or tab == 'my-pantry' %}active{% endif %}"
+         style="{% if not tab or tab == 'my-pantry' %}background: #fffbe6; color: #2a4d69; border: 1.5px solid #f5e9da;{% else %}background: transparent; color: #f5e9da; border: 1.5px solid transparent;{% endif %} border-bottom: none; border-radius: 1rem 1rem 0 0; font-weight: 600; font-size: 1.1rem;"
+         id="my-pantry-tab" href="{% url 'pantry_list' %}">My Pantry</a>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="suggestions-tab" data-bs-toggle="tab" data-bs-target="#suggestions" type="button" role="tab" aria-controls="suggestions" aria-selected="false">Recipe Suggestions</button>
+      <a class="nav-link {% if tab == 'suggestions' %}active{% endif %}"
+         style="{% if tab == 'suggestions' %}background: #fffbe6; color: #2a4d69; border: 1.5px solid #f5e9da;{% else %}background: transparent; color: #f5e9da; border: 1.5px solid transparent;{% endif %} border-bottom: none; border-radius: 1rem 1rem 0 0; font-weight: 600; font-size: 1.1rem;"
+         id="suggestions-tab" href="{% url 'pantry_suggest_recipes' %}">Recipe Suggestions</a>
     </li>
   </ul>
   <div class="tab-content" id="pantryTabsContent">
-    <div class="tab-pane fade show active" id="my-pantry" role="tabpanel" aria-labelledby="my-pantry-tab">
+    <div class="tab-pane fade {% if not tab or tab == 'my-pantry' %}show active{% endif %}" id="my-pantry" role="tabpanel" aria-labelledby="my-pantry-tab">
       {% include 'pantry/pantry_list.html' %}
     </div>
-    <div class="tab-pane fade" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
+    <div class="tab-pane fade {% if tab == 'suggestions' %}show active{% endif %}" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
       {% include 'pantry/pantry_suggest_recipes.html' %}
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 {% endblock %}
