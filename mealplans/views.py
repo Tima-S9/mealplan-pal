@@ -31,6 +31,9 @@ def create_shopping_list_from_mealplan(request):
                 ShoppingItem.objects.create(user=request.user, ingredient=ingredient)
         return redirect('shopping_list')
 # Dashboard view for Mealplans
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def mealplans_dashboard(request):
     return render(request, 'mealplans/dashboard.html')
 # Shopping List View

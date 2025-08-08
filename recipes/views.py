@@ -60,6 +60,9 @@ class HomeView(TemplateView):
     template_name = "recipes/home.html"
 
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def recipes_dashboard(request):
     from .models import Recipe
     search_tab = request.GET.get('search_tab', 'my')

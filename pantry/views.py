@@ -50,6 +50,9 @@ def add_missing_to_shopping_list(request, recipe_pk):
     return redirect('shopping_list')
 
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def pantry_dashboard(request):
     from .models import PantryItem
     from recipes.models import Recipe, Ingredient
