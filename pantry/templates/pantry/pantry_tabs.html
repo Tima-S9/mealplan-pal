@@ -26,3 +26,10 @@
   </div>
 </div>
 {% endblock %}
+
+<script>
+  // Redirect to /pantry/suggestions/ if hash is #suggestions
+  if (window.location.hash === '#suggestions') {
+    window.location.href = '{% url 'pantry_suggest_recipes' %}';
+  }
+</script>
