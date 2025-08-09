@@ -76,7 +76,8 @@ def add_to_shopping_list(request):
         messages.error(request, 'Selected meal plan does not exist.')
         return redirect(reverse('shopping_list'))
     added_count = 0
-    for ingredient in recipe.ingredients.all():
+    for ri in recipe.recipeingredient_set.all():
+        ingredient = ri.ingredient
         obj, created = ShoppingItem.objects.get_or_create(mealplan=mealplan, ingredient=ingredient, defaults={'total_amount': 1.0})
         if created:
             added_count += 1
