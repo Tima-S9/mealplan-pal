@@ -31,9 +31,8 @@ MealPlan Pal is ideal for anyone looking to save time, reduce food waste, and st
 13. Screenshots
 14. Known Issues & Limitations
 15. Contributing
-16. License
-17. Acknowledgments
-18. Contact
+16. Acknowledgments
+
 
 
 ## Features
@@ -87,91 +86,72 @@ MealPlan <-- ShoppingItem --> Ingredient
 
 Below are key user stories for MealPlan Pal, each with clear acceptance criteria to guide development and validation.
 
-### 1. As a user, I want to create and manage my own recipes so that I can easily reuse them in meal plans.
+### 1. As a user, I want to create and manage my own recipes so that I can easily reuse them in meal plans. (Must Have)
 **Acceptance Criteria:**
 - User can add a new recipe with title, description, ingredients, and image.
 - User can edit or delete any recipe they own.
 - Recipes are visible only to the user unless marked public.
 - Form validation prevents incomplete submissions.
 
-### 2. As a user, I want to track my pantry inventory so I know what ingredients I have at home.
+> **Note:** Recipes are private by default. Only recipes explicitly marked as public by the user will be visible to others. This ensures user privacy is maintained unless the user chooses to share.
+
+### 2. As a user, I want to track my pantry inventory so I know what ingredients I have at home. (Could Have)
 **Acceptance Criteria:**
 - User can add, edit, or remove pantry items (ingredient, amount, unit).
 - Pantry dashboard displays all current items.
 - Suggestions are provided for recipes based on pantry contents.
 
-### 3. As a user, I want to plan my weekly meals by assigning recipes to days and meal types.
+### 3. As a user, I want to plan my weekly meals by assigning recipes to days and meal types. (Must Have)
 **Acceptance Criteria:**
 - User can create a meal plan for a specific week.
 - User can assign recipes to each day and meal type (e.g., breakfast, lunch, dinner).
 - Meal plan is displayed in a calendar view.
 - User can edit or delete meal plans.
 
-### 4. As a user, I want to generate a shopping list based on my meal plan and pantry inventory.
+### 4. As a user, I want to generate a shopping list based on my meal plan and pantry inventory. (Could Have)
 **Acceptance Criteria:**
 - Shopping list includes only ingredients not already in the pantry.
 - User can check off items as they shop.
 - Shopping list updates automatically if the meal plan or pantry changes.
 
-### 5. As a user, I want my data (recipes, pantry, meal plans) to be private and secure.
+### 5. As a user, I want my data (recipes, pantry, meal plans) to be private and secure. (Must Have)
 **Acceptance Criteria:**
 - Users must log in to access their dashboards.
 - Each user’s data is isolated; users cannot view or edit others’ data.
 - Permissions are enforced for all CRUD operations.
 
-### 6. As a user, I want to search for and import recipes from an external API.
+### 6. As a user, I want to search for and import recipes from an external API. (Must Have)
 **Acceptance Criteria:**
 - User can search for recipes by keyword.
 - User can import selected recipes into their own collection.
 - Imported recipes include all relevant details (title, ingredients, instructions, image).
 
-### 7. As a user, I want a modern, responsive interface that works well on desktop and mobile.
+### 7. As a user, I want a modern, responsive interface that works well on desktop and mobile. (Must Have)
 **Acceptance Criteria:**
 - All dashboards and forms are mobile-friendly.
 - Navigation is clear and accessible on all devices.
 - Visual feedback is provided for actions (e.g., success, error messages).
 
-### MoSCoW Prioritization
-
-#### Must Have
-- See user stories above (core features: recipe, pantry, meal plan, shopping list, privacy, API import, responsive UI)
-
-#### Should Have
-
-##### SH1. As a user, I should be able to reset my password if I forget it.
+### 8. As a user, I should be able to reset my password if I forget it. (Should have)
 **Acceptance Criteria:**
 - User can request a password reset link via email.
 - User receives a secure, time-limited reset link.
 - User can set a new password and log in successfully.
 
-##### SH2. As a user, I should be able to print or export my shopping list.
+### 9. As a user, I should be able to print or export my shopping list. (Should Have)
 **Acceptance Criteria:**
 - User can print the shopping list from the browser.
 - User can export the shopping list as a PDF or CSV file.
 
-##### SH3. As a user, I should receive notifications for expiring pantry items.
+### 10. As a user, I should receive notifications for expiring pantry items. (Should Have)
 **Acceptance Criteria:**
 - User is notified when pantry items are nearing expiration (if expiry dates are tracked).
 - Notifications are visible in the dashboard or sent via email (if configured).
 
-#### Could Have
-
-##### CH1. As a user, I could share my meal plan with family members or friends.
+### 11. As a user, I could share my meal plan with family members or friends.
 **Acceptance Criteria:**
 - User can generate a shareable link or invite others to view their meal plan.
 - Shared users have view-only access (unless granted edit permissions).
-
-##### CH2. As a user, I could customize the app’s color theme (light/dark mode).
-**Acceptance Criteria:**
-- User can toggle between light and dark mode in the UI.
-- Theme preference is saved for future visits.
-
-##### CH3. As a user, I could add notes or comments to recipes and meal plans.
-**Acceptance Criteria:**
-- User can add, edit, or delete personal notes on recipes and meal plans.
-- Notes are private to the user unless explicitly shared.
-
----
 
 ## App Structure
 
@@ -657,12 +637,45 @@ MealPlan Pal is built with the help of many open-source projects and libraries. 
 
 ---
 
-## Contact
+## Agile & Project Management
 
-For questions, feedback, or support, please contact the MealPlan Pal development team:
+This project follows Agile methodologies and uses a public GitHub Project Board to track progress, prioritize tasks, and map user stories to development work.
 
-- **Email:** support@mealplanpal.com
-- **GitHub Issues:** [MealPlan Pal Issues](https://github.com/Tima-S9/mealplan-pal/issues)
-- **Documentation:** [MealPlan Pal Docs](https://mealplanpal.com/docs)
+- **Project Board:** [MealPlan Pal Project Board](https://github.com/Tima-S9/mealplan-pal/projects)
+- The board includes at least three columns: Backlog, In Progress, and Done.
+- User stories are mapped to tasks and issues for clear traceability.
+- MoSCoW prioritization is used to evidence feature importance and delivery order.
 
-We’d love to hear from you!
+## Deployment
+
+To deploy MealPlan Pal to a production environment:
+
+1. **Set environment variables:**
+   - Ensure `DEBUG = False` in `pantry_pal/settings.py` or via environment variable.
+   - Set a secure `SECRET_KEY` and configure `ALLOWED_HOSTS`.
+2. **Choose a platform:**
+   - Options include Heroku, PythonAnywhere, or your own VPS.
+3. **Install dependencies:**
+   - Run `pip install -r requirements.txt` on the server.
+4. **Apply migrations:**
+   - Run `python manage.py migrate`.
+5. **Collect static files:**
+   - Run `python manage.py collectstatic`.
+6. **Configure web server:**
+   - Set up Gunicorn, uWSGI, or another WSGI server as needed.
+7. **Start the app:**
+   - Ensure the app is running and accessible at your production URL.
+
+Refer to your chosen platform’s documentation for detailed steps.
+
+## AI Implementation
+
+AI tools were used to enhance development and documentation:
+
+- **GitHub Copilot:** Assisted with code generation, refactoring, and documentation writing throughout the project.
+- **Copilot Chat:** Provided suggestions, debugging help, and best practices for Django, testing, and markdown formatting.
+- **AI-generated assets:** Some background images and design suggestions were created with AI tools.
+
+These tools improved productivity, code quality, and documentation clarity.
+
+---
