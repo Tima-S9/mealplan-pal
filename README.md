@@ -84,74 +84,28 @@ MealPlan <-- ShoppingItem --> Ingredient
 
 ## User Stories & Acceptance Criteria
 
-Below are key user stories for MealPlan Pal, each with clear acceptance criteria to guide development and validation.
+Below are user stories for MealPlan Pal. View Mealpal Project board for more details.
 
-### 1. As a user, I want to create and manage my own recipes so that I can easily reuse them in meal plans. (Must Have)
-**Acceptance Criteria:**
-- User can add a new recipe with title, description, ingredients, and image.
-- User can edit or delete any recipe they own.
-- Recipes are visible only to the user unless marked public.
-- Form validation prevents incomplete submissions.
+**Legend:**
+- MH = Must Have
+- SH = Should Have
+- CH = Could Have
+- WH = Won't Have.
 
-> **Note:** Recipes are private by default. Only recipes explicitly marked as public by the user will be visible to others. This ensures user privacy is maintained unless the user chooses to share.
+Note: There was no WH on this project
 
-### 2. As a user, I want to track my pantry inventory so I know what ingredients I have at home. (Could Have)
-**Acceptance Criteria:**
-- User can add, edit, or remove pantry items (ingredient, amount, unit).
-- Pantry dashboard displays all current items.
-- Suggestions are provided for recipes based on pantry contents.
 
-### 3. As a user, I want to plan my weekly meals by assigning recipes to days and meal types. (Must Have)
-**Acceptance Criteria:**
-- User can create a meal plan for a specific week.
-- User can assign recipes to each day and meal type (e.g., breakfast, lunch, dinner).
-- Meal plan is displayed in a calendar view.
-- User can edit or delete meal plans.
-
-### 4. As a user, I want to generate a shopping list based on my meal plan and pantry inventory. (Could Have)
-**Acceptance Criteria:**
-- Shopping list includes only ingredients not already in the pantry.
-- User can check off items as they shop.
-- Shopping list updates automatically if the meal plan or pantry changes.
-
-### 5. As a user, I want my data (recipes, pantry, meal plans) to be private and secure. (Must Have)
-**Acceptance Criteria:**
-- Users must log in to access their dashboards.
-- Each user’s data is isolated; users cannot view or edit others’ data.
-- Permissions are enforced for all CRUD operations.
-
-### 6. As a user, I want to search for and import recipes from an external API. (Must Have)
-**Acceptance Criteria:**
-- User can search for recipes by keyword.
-- User can import selected recipes into their own collection.
-- Imported recipes include all relevant details (title, ingredients, instructions, image).
-
-### 7. As a user, I want a modern, responsive interface that works well on desktop and mobile. (Must Have)
-**Acceptance Criteria:**
-- All dashboards and forms are mobile-friendly.
-- Navigation is clear and accessible on all devices.
-- Visual feedback is provided for actions (e.g., success, error messages).
-
-### 8. As a user, I should be able to reset my password if I forget it. (Should have)
-**Acceptance Criteria:**
-- User can request a password reset link via email.
-- User receives a secure, time-limited reset link.
-- User can set a new password and log in successfully.
-
-### 9. As a user, I should be able to print or export my shopping list. (Should Have)
-**Acceptance Criteria:**
-- User can print the shopping list from the browser.
-- User can export the shopping list as a PDF or CSV file.
-
-### 10. As a user, I should receive notifications for expiring pantry items. (Should Have)
-**Acceptance Criteria:**
-- User is notified when pantry items are nearing expiration (if expiry dates are tracked).
-- Notifications are visible in the dashboard or sent via email (if configured).
-
-### 11. As a user, I could share my meal plan with family members or friends.
-**Acceptance Criteria:**
-- User can generate a shareable link or invite others to view their meal plan.
-- Shared users have view-only access (unless granted edit permissions).
+- As a user, I want a modern, responsive interface that works well on desktop and mobile. mh
+- As a user, I want to create and manage my own recipes so that I can easily reuse them in meal plans. mh
+- As a user, I can drag recipes into a weekly meal calendar so that I can plan my meals. mh
+- As a user, I can generate a shopping list so I know what to buy. mh
+- As a user, I can enter the ingredients I have so that the system suggests recipes I can cook. sh
+- As a user, I want to search for and import recipes from an external API so I can save them to my recipes and create a meal plan thereafter. mh
+- As a user, I want to mark a recipe as public so that others can use it, while guaranteeing that my personal data (recipes, pantry, meal plans) remains private and secure. sh
+- As a user, I can share my meal plan or create a household group so we can plan meals together. CH
+- As a user, I can view weekly nutrition stats so that I understand my dietary intake. SH
+- As a user, I want to print or export my shopping list. Ch
+- As a user, I want to receive notifications for expiring pantry items so that I can update my pantry list . sh
 
 ## App Structure
 
