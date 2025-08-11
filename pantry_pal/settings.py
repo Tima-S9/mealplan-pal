@@ -32,7 +32,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
     DEBUG = True
 # else:
     # DEBUG = False
-    DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = False
 
 
 # Set ALLOWED_HOSTS for Heroku and local dev
