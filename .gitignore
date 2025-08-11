@@ -7,8 +7,6 @@ db.sqlite3
 *.log
 # Django stuff:
 staticfiles/*
-static/
-media/
 *.sqlite3
 migrations/
 *.pot
