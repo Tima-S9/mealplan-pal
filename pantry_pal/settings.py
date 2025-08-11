@@ -185,10 +185,6 @@ if not DEBUG:
     os.makedirs(STATIC_ROOT, exist_ok=True)
     os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# Media files (user uploads)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
