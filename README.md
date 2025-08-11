@@ -84,7 +84,7 @@ MealPlan <-- ShoppingItem --> Ingredient
 
 ## User Stories & Acceptance Criteria
 
-Below are user stories for MealPlan Pal. View Mealpal Project board for more details.
+Below are the user stories for MealPlan Pal. the detailed user stories and acceptance criteria can be found on here ![Capsone Project](https://github.com/users/Tima-S9/projects/6/views/1)
 
 **Legend:**
 - MH = Must Have
@@ -291,7 +291,30 @@ Below are wireframes styled to look like screenshots, illustrating the main user
 |                                                             |
 | [Print List]                                               |
 +-------------------------------------------------------------+
+
 ```
+### Screenshots
+
+
+![Home Page](static/img/mealpal-homepage.png)
+*Welcome page with navigation options.*
+
+![Recipe Form](static/img/recipes-form-page.png)
+*Form for creating or editing a recipe.*
+
+![pantry page](static/img/My-pantry-page.png)
+*View and manage your pantry items.*
+
+![Meal Plan Dashboard](static/img/Mealplans-dashboard-page.png)
+*Create and manage your meal plans on a weekly calendar.*
+
+![Shopping List](static/img/mealplan-shopping-list.png)
+*Your shopping list, generated from the meal plan.*
+
+![sign out Form](static/img/signout-form.png)
+*sign out form.*
+
+---
 
 ## Color Palette
 
@@ -494,6 +517,22 @@ To extend test coverage, add new test methods to `tests.py` following the struct
 - `test_user_flows.spec.js`: Playwright end-to-end browser tests for key user flows.
 - `TESTING_README.md`: A comprehensive list of all test files, their locations, and how they work.
 
+![Tests.py](static/img/tests.py-success.png)
+*Tests.py success screnshot*
+
+### html validation
+ - all html files validated
+
+
+![html validation](static/img/recipe-page html validation.png)
+*Html validation screenshot*
+
+### CSS Validation
+Both CSS files were validated
+
+![CSS validation](static/img/css1-validation.png)
+*Css Validation screenshot.*
+
 ---
 
 ## Usage Guide
@@ -528,34 +567,11 @@ For a more detailed guide, refer to the in-app help section or the user manual p
 
 ---
 
-## Screenshots
-
-![Home Page](screenshots/home_page.png)
-*Welcome page with navigation options.*
-
-![Recipes Dashboard](screenshots/recipes_dashboard.png)
-*Overview of your recipes with options to manage and create new recipes.*
-
-![Recipe Form](screenshots/recipe_form.png)
-*Form for creating or editing a recipe.*
-
-![Pantry Dashboard](screenshots/pantry_dashboard.png)
-*View and manage your pantry items.*
-
-![Meal Plan Dashboard](screenshots/meal_plan_dashboard.png)
-*Create and manage your meal plans on a weekly calendar.*
-
-![Shopping List](screenshots/shopping_list.png)
-*Your shopping list, generated from the meal plan.*
-
----
-
 ## Known Issues & Limitations
 
 - **Performance:** The app is optimized for small to medium-sized databases. Performance may vary with very large datasets.
 - **API Limitations:** External recipe suggestions depend on the availability and rate limits of the integrated recipe API.
 - **Email Functionality:** Email features require proper email backend configuration in `settings.py`.
-- **Static Files in Production:** Ensure `DEBUG = False` and run `collectstatic` to serve static files correctly in production.
 
 ---
 
@@ -573,12 +589,6 @@ Please ensure your code follows the existing style and includes appropriate test
 ---
 
 
-## License
-
-MealPlan Pal is open-source software licensed under the MIT License. See `LICENSE` for details.
-
----
-
 ## Acknowledgments
 
 MealPlan Pal is built with the help of many open-source projects and libraries. Special thanks to:
@@ -588,6 +598,7 @@ MealPlan Pal is built with the help of many open-source projects and libraries. 
 - **External Recipe API:** For providing recipe data and suggestions.
 - **GitHub Copilot:** For AI-powered coding assistance and documentation support.
 - **Copilot** for bg- image generation.
+- **Code institute Resources**
 
 ---
 
@@ -596,7 +607,7 @@ MealPlan Pal is built with the help of many open-source projects and libraries. 
 This project follows Agile methodologies and uses a public GitHub Project Board to track progress, prioritize tasks, and map user stories to development work.
 
 - **Project Board:** [MealPlan Pal Project Board](https://github.com/Tima-S9/mealplan-pal/projects)
-- The board includes at least three columns: Backlog, In Progress, and Done.
+- The board includes at least four columns: Backlog, Todo, In Progress, and Done.
 - User stories are mapped to tasks and issues for clear traceability.
 - MoSCoW prioritization is used to evidence feature importance and delivery order.
 
@@ -620,7 +631,6 @@ To deploy MealPlan Pal to a production environment:
 7. **Start the app:**
    - Ensure the app is running and accessible at your production URL.
 
-Refer to your chosen platform’s documentation for detailed steps.
 
 ## AI Implementation
 

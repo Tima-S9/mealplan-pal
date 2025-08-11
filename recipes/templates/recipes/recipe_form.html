@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+{% endblock %}
+
 {% block content %}
 <div class="container py-5">
   <div class="row justify-content-center">
@@ -143,7 +148,6 @@
                   <small class="text-muted">If your ingredient is not listed, add it here and it will be included in your recipe.</small>
                 </div>
               </div>
-              </div>
             </div>
             <div class="d-grid mt-4">
               <button type="submit" class="btn btn-primary btn-lg">{% if recipe %}Update Recipe{% else %}Create Recipe{% endif %}</button>
@@ -154,7 +158,9 @@
     </div>
   </div>
 </div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block extra_js %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var triggerTabList = [].slice.call(document.querySelectorAll('#recipeTab button'));

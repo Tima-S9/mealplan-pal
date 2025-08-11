@@ -1,3 +1,20 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<style>
+  .recipe-card:hover {
+    box-shadow: 0 4px 24px rgba(42,77,105,0.18);
+    transform: translateY(-2px) scale(1.02);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .recipe-img {
+    height: 220px;
+    object-fit: cover;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
 <div class="row g-4">
   {% for recipe in recipes %}
     <div class="col-12 col-md-6 col-lg-4">
@@ -32,14 +49,4 @@
     </div>
   {% endfor %}
 </div>
-<style>
-  .recipe-card:hover {
-    box-shadow: 0 4px 24px rgba(42,77,105,0.18);
-    transform: translateY(-2px) scale(1.02);
-    transition: box-shadow 0.2s, transform 0.2s;
-  }
-  .recipe-img {
-    height: 220px;
-    object-fit: cover;
-  }
-</style>
+{% endblock %}
