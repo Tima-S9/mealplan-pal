@@ -22,11 +22,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-!f@lz$l@za49h*%$qml*_kum0c(wse0nx=#e%g_248!%mg1&hc'
+
+# Use SECRET_KEY from environment for production safety
 SECRET_KEY = os.environ.get("SECRET_KEY")
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['.herokuapp.com', '127.0.0.1']
+
+# Set DEBUG from environment variable (default False for safety)
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+# Set ALLOWED_HOSTS for Heroku and local dev
+# Replace 'your-app-name' with your actual Heroku app name
+ALLOWED_HOSTS = [
+    'https://mealplan-pal-58c5efa3a909.herokuapp.com/',
+    '127.0.0.1',
+    'localhost',
+]
+
+# Optionally, allow all Heroku subdomains (less secure, but works for review apps)
+# ALLOWED_HOSTS += ['.herokuapp.com']
 
 
 # Application definition
@@ -162,6 +174,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # For collectstatic on Heroku
 
 # WhiteNoise settings for serving static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Production static/media error handling
+if not DEBUG:
+    # Ensure static and media folders exist
+    os.makedirs(STATIC_ROOT, exist_ok=True)
+    os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # Media files (user uploads)
 MEDIA_URL = '/media/'
