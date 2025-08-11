@@ -38,6 +38,7 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 # Replace 'your-app-name' with your actual Heroku app name
 ALLOWED_HOSTS = [
     'mealplan-pal-58c5efa3a909.herokuapp.com',
+    'https://mealplan-pal-58c5efa3a909.herokuapp.com',
     '127.0.0.1',
     'localhost',
 ]
@@ -131,7 +132,7 @@ DATABASES = {
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.codeinstitute-ide.net/",
-    "https://*.herokuapp.com"
+    "https://mealplan-pal-58c5efa3a909.herokuapp.com"
 ]
 
 # Password validation
