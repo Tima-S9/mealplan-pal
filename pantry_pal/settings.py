@@ -27,18 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # Set DEBUG from environment variable (default False for safety)
-# DEBUG = True
-# if os.path.isfile('env.py'):
-    DEBUG = True
-# else:
-    # DEBUG = False
 DEBUG = False
 
 
 # Set ALLOWED_HOSTS for Heroku and local dev
 # Replace 'your-app-name' with your actual Heroku app name
 ALLOWED_HOSTS = [
-    'mealplan-pal-58c5efa3a909.herokuapp.com/',
+    'mealplan-pal-58c5efa3a909.herokuapp.com',
     '127.0.0.1',
     'localhost',
 ]
