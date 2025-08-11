@@ -15,23 +15,26 @@ MealPlan Pal is a full-featured Django web application designed to simplify meal
 
 MealPlan Pal is ideal for anyone looking to save time, reduce food waste, and streamline their meal preparation process—all in a user-friendly, mobile-responsive web app.
 
+
 ## Table of Contents
-1. Overview
-2. Features
-3. User Stories & Acceptance Criteria
-4. App Structure
-5. Database Models
-6. Wireframes
-7. Color Palette
-8. Diagrams
-9. Setup & Installation
-10. Configuration
-11. Testing & Validation
-12. Usage Guide
-13. Screenshots
-14. Known Issues & Limitations
-15. Contributing
-16. Acknowledgments
+1. [Overview](#overview)
+2. [Features](#features)
+3. [User Stories & Acceptance Criteria](#user-stories--acceptance-criteria)
+4. [App Structure](#app-structure)
+5. [Database Models](#database-models)
+6. [Wireframes](#wireframes)
+9. [Color Palette](#color-palette)
+10. [Diagrams](#diagrams)
+11. [Setup & Installation](#setup--installation)
+12. [Configuration](#configuration)
+13. [Testing & Validation](#testing--validation)
+14. [Usage Guide](#usage-guide)
+15. [Known Issues & Limitations](#known-issues--limitations)
+16. [Contributing](#contributing)
+17. [Acknowledgments](#acknowledgments)
+18. [Agile & Project Management](#agile--project-management)
+19. [Deployment](#deployment)
+20. [AI Implementation](#ai-implementation)
 
 
 
@@ -295,6 +298,8 @@ Below are wireframes styled to look like screenshots, illustrating the main user
 ```
 ### Screenshots
 
+![Home page Wireframe](static/img/homepage-wireframe.png)
+*homepage wireframes made using Balsamic.io*
 
 ![Home Page](static/img/mealpal-homepage.png)
 *Welcome page with navigation options.*
@@ -517,7 +522,7 @@ To extend test coverage, add new test methods to `tests.py` following the struct
 - `test_user_flows.spec.js`: Playwright end-to-end browser tests for key user flows.
 - `TESTING_README.md`: A comprehensive list of all test files, their locations, and how they work.
 
-![Tests.py](static/img/tests.py-success.png)
+![Tests.py](static/img/tests.py-success1.png)
 *Tests.py success screnshot*
 
 ### html validation
