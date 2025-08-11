@@ -38,7 +38,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # Set ALLOWED_HOSTS for Heroku and local dev
 # Replace 'your-app-name' with your actual Heroku app name
 ALLOWED_HOSTS = [
-    'https://mealplan-pal-58c5efa3a909.herokuapp.com/',
+    'mealplan-pal-58c5efa3a909.herokuapp.com/',
     '127.0.0.1',
     'localhost',
 ]
