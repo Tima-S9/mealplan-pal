@@ -27,7 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # Set DEBUG from environment variable (default False for safety)
-DEBUG = False
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
 
 
 # Set ALLOWED_HOSTS for Heroku and local dev
