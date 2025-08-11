@@ -21,7 +21,7 @@ python-decouple==3.8
 python3-openid==3.2.0
 requests==2.32.4
 requests-oauthlib==2.0.0
-setuptools==80.9.0
+setuptools==66.1.1
 sqlparse==0.5.3
 tzdata==2025.2
 urllib3==2.5.0
