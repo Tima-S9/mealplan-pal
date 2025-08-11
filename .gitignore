@@ -6,7 +6,7 @@ db.sqlite3
 *.pyo
 *.log
 # Django stuff:
-staticfiles/
+staticfiles/*
 static/
 media/
 *.sqlite3
