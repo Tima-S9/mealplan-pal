@@ -325,17 +325,17 @@ Below are wireframes styled to look like screenshots, illustrating the main user
 
 The MealPlan Pal UI uses a modern, accessible color palette for clarity and usability. All colors are chosen for strong contrast and a clean, professional look.
 
-| Color Name    | Hex      | Usage                                 | Preview        |
-|-------------- |----------|---------------------------------------|----------------|
-| Primary Blue  | #0d6efd  | Navbar, buttons, links                | <span style="display:inline-block;width:24px;height:16px;background:#0d6efd;border:1px solid #ccc;"></span> |
-| Success Green | #198754  | Add/Create buttons, success messages  | <span style="display:inline-block;width:24px;height:16px;background:#198754;border:1px solid #ccc;"></span> |
-| Warning Gold  | #ffc107  | Warnings, suggestions, highlights     | <span style="display:inline-block;width:24px;height:16px;background:#ffc107;border:1px solid #ccc;"></span> |
-| Danger Red    | #dc3545  | Delete buttons, error messages        | <span style="display:inline-block;width:24px;height:16px;background:#dc3545;border:1px solid #ccc;"></span> |
-| Info Cyan     | #0dcaf0  | Info alerts, secondary highlights     | <span style="display:inline-block;width:24px;height:16px;background:#0dcaf0;border:1px solid #ccc;"></span> |
-| Dark Gray     | #212529  | Footer, text, active tab              | <span style="display:inline-block;width:24px;height:16px;background:#212529;border:1px solid #ccc;"></span> |
-| Light Gray    | #f8f9fa  | Backgrounds, cards, input fields      | <span style="display:inline-block;width:24px;height:16px;background:#f8f9fa;border:1px solid #ccc;"></span> |
-| White         | #ffffff  | Main backgrounds, cards, forms        | <span style="display:inline-block;width:24px;height:16px;background:#ffffff;border:1px solid #ccc;"></span> |
-| Black         | #000000  | Text, icons                           | <span style="display:inline-block;width:24px;height:16px;background:#000000;border:1px solid #ccc;"></span> |
+| Color Name    | Hex      | Usage                                 | Preview |
+|-------------- |----------|---------------------------------------|---------|
+| Primary Blue  | #0d6efd  | Navbar, buttons, links                | 🟦      |
+| Success Green | #198754  | Add/Create buttons, success messages  | 🟩      |
+| Warning Gold  | #ffc107  | Warnings, suggestions, highlights     | 🟨      |
+| Danger Red    | #dc3545  | Delete buttons, error messages        | 🟥      |
+| Info Cyan     | #0dcaf0  | Info alerts, secondary highlights     | 🟦      |
+| Dark Gray     | #212529  | Footer, text, active tab              | ⚫      |
+| Light Gray    | #f8f9fa  | Backgrounds, cards, input fields      | ⚪      |
+| White         | #ffffff  | Main backgrounds, cards, forms        | ⚪      |
+| Black         | #000000  | Text, icons                           | ⚫      |
 
 ---
 
@@ -423,8 +423,7 @@ Follow these steps to get MealPlan Pal running locally:
    python manage.py runserver
    ```
 7. **Access the app:**
-   Open your browser and go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-
+   Open your browser and go to displayed  Url in terminal.
 ---
 
 ## Configuration
@@ -529,7 +528,7 @@ To extend test coverage, add new test methods to `tests.py` following the struct
  - all html files validated
 
 
-![html validation](static/img/recipe-page html validation.png)
+![html validation](static/img/recipe-page-html-validation.png)
 *Html validation screenshot*
 
 ### CSS Validation
@@ -537,6 +536,15 @@ Both CSS files were validated
 
 ![CSS validation](static/img/css1-validation.png)
 *Css Validation screenshot.*
+
+### Lighhouse validation
+
+- performace = 93
+- Accessibility = 94
+- Best Practices = 96
+
+![lighhouse validation](static/img/lighthouse-performance.png)
+*lighthouse Validation screenshot.*
 
 ---
 
