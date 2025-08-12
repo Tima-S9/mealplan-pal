@@ -20,6 +20,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+import cloudinary
+import cloudinary_storage
+
+# Cloudinary media storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Cloudinary configuration (set these in your environment or Heroku config)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+# Media URL (Cloudinary will handle media URLs)
+MEDIA_URL = '/media/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -64,6 +79,8 @@ INSTALLED_APPS = [
     'recipes',
     'pantry',
     'mealplans',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # Application definition
@@ -184,7 +201,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 if not DEBUG:
     # Ensure static and media folders exist
     os.makedirs(STATIC_ROOT, exist_ok=True)
-    os.makedirs(MEDIA_ROOT, exist_ok=True)
+    # os.makedirs(MEDIA_ROOT, exist_ok=True)  # Not needed with Cloudinary
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
